@@ -9,6 +9,10 @@ class TicTacToe:
     def __init__(self, player):
         #initial board
         pygame.init()
+
+        # actionlist
+        self.actionlist = [0,0,0,0,0,0,0,0,0]
+
         self.screen_width=600
         self.screen_height=600
         self.board = pygame.display.set_mode((self.screen_width,self.screen_height))
@@ -35,8 +39,7 @@ class TicTacToe:
         # draw the window onto the screen
         pygame.display.update()
 
-        # actionlist
-        self.actionlist = [0,0,0,0,0,0,0,0,0]
+
 
 
     def startdisplay(self):
@@ -94,12 +97,10 @@ class TicTacToe:
     def action(self, fieldnumber):
 
         for i in range(1):
-            if not actionlist[fieldnumber] == 0:
+            if not self.actionlist[fieldnumber] == 0:
                 break
-            if self.player == 1:
-                self.X("X", fieldnumber)
-            elif self.player == 2:
-                self.X("O", fieldnumber)
+            self.X("X", fieldnumber)
+
             # for i in actionlist:
             #     if not i ==
 
@@ -116,15 +117,26 @@ class TicTacToe:
         self.outputfield[fieldnumber] = pygame.draw.rect(self.board, self.WHITE, (xposition,yposition,100,100))
         text = self.basicFont.render(character, True, self.BLACK, self.WHITE)
         self.board.blit(text, self.outputfield[fieldnumber])
+
+        #update actionlist
         self.actionlist[fieldnumber]=self.player
+        print(self.actionlist)
         pygame.display.update()
 
-    def update(self):
-        pass
+    def update(self, updated_list):
+        fieldnumber=int()
+        for i in range(9):
+            if self.actionlist[i] != updated_list[i]:
+                fieldnumber = i
+                self.actionlist[i] = updated_list[i]
+                break
+        self.X("O",fieldnumber)
+
 
 
     def mainloop(self):
-        while True:
+        mainloop_boolean=True
+        while mainloop_boolean:
             for event in pygame.event.get():
 
                 if event.type == pygame.QUIT:
@@ -135,7 +147,7 @@ class TicTacToe:
                     if event.type == pygame.MOUSEBUTTONDOWN and self.inputfield[i].collidepoint(pygame.mouse.get_pos()):
                         self.action(i)
                         self.wait_for_player()
-                        break
+                        mainloop_boolean=False
 
     def wait_for_player(self):
         print("Please wait for your opponents action")
