@@ -31,11 +31,10 @@ class Gui:
         self.txtScreen.insert(END, "connecting...\n")
 
         self.api = NetGameApi(username, "tictactoe", lambda: self.reciever)
+        time.sleep(.42)
+        self.api.makeConnection()
         self.tcpthread = Thread(name='tcp', target=self.api.startReceiving())
         self.tcpthread.start()
-        self.api.makeConnection()
-        # except:
-        #     self.txtScreen.insert(END, "Connection failed!\n")
 
 
     def reciever(self, data):
