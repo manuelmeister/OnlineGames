@@ -16,9 +16,6 @@ class NetGameApi:
     def newInstance(self):
         self.model = Model('localhost', 12345)
         self.model.connect()
-        self.makeConnection()
-        self.tcpthread = Thread(name='tcp', target=self.startReceiving())
-        self.tcpthread.start()
 
     def decode_JSON(self, string):
         return json.loads(string)
