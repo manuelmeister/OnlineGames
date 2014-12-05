@@ -29,6 +29,15 @@ class NetGameApi:
         }
         self.model.send(dictionary)
 
+    def connectToPlayer(self, playername):
+        dictionary = {
+            "action": "connect",
+            "data": {
+                "username": playername
+            }
+        }
+        self.model.send(dictionary)
+
     def submitGameData(self, content):
         dictionary = {
             "action": "gamedata",

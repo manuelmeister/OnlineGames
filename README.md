@@ -1,16 +1,15 @@
 NetGameAPI
 ==========
 
-Install
--------
+##Install
 
 <code>from gameserver.netgameapi import *
 </code>
 
-Transmitting Data
------------------
+##Transmitting Data
 
-Make a connection using makeConnection()
+
+###Make a connection using makeConnection()
 <pre><code>
 {
     "action":"connection",
@@ -21,7 +20,8 @@ Make a connection using makeConnection()
 }
 </code></pre>
 
-Send connect to Player request
+###Connect to player
+Use <code>connectToPlayer(playername)</code>
 <pre><code>
 {
     "action":"connect",
@@ -31,7 +31,8 @@ Send connect to Player request
 }
 </code></pre>
 
-Playerlist
+###Playerlist
+Format of playerlist
 <pre><code>
 {
     "action": "listplayers",
