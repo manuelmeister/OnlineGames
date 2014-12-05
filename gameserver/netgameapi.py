@@ -7,7 +7,7 @@ import time
 class NetGameApi:
     def __init__(self, username, gametype, receivingFunction):
         Thread.__init__(self)
-        self.receivingFunction = receivingFunction
+        self.receivingFunction = receivingFunction()
         self.username = username
         self.gametype = gametype
         self.output = ''
@@ -16,6 +16,7 @@ class NetGameApi:
     def newInstance(self):
         self.model = Model('localhost', 12345)
         self.model.connect()
+        self.makeConnection()
         self.tcpthread = Thread(name='tcp', target=self.startReceiving())
         self.tcpthread.start()
 
@@ -55,15 +56,6 @@ class NetGameApi:
 
             except socket.error:
                 break
-
-    def errorProcessing(self, error):
-        #Messagebox error["errorinfo"] & error["helpmessage"]
-        return {
-            'doubleusername': self.askForUsername(),
-            'doubleusername': self.askForUsername()
-        }.get([error["errorinfo"]], self.showMessageBox())
-
-
 
 class Model(object):
     def __init__(self, host, port):
