@@ -4,7 +4,6 @@ import threading
 from gameserver.netgameapi import *
 import tictactoe
 
-
 #from multiprocessing.pool import ThreadPool
 #from functools import partial
 
@@ -36,14 +35,14 @@ class Gui:
 
         self.api = NetGameApi(username, "tictactoe", lambda: self.reciever)
         self.tcpthread = Thread(name='tcp', target=self.api.startReceiving())
-        #self.tcpthread.start()
+        self.tcpthread.start()
         self.api.makeConnection()
         # except:
         #     self.txtScreen.insert(END, "Connection failed!\n")
 
 
-    def reciever(self, data):
-
+    def reciever(self, jsonfile):
+        data = self.api.json_decode(jsonfile)
         print(data)
 
     def initialize_tictactoe(self):

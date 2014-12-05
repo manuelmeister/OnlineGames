@@ -77,4 +77,4 @@ class Model(object):
             return data
 
     def send(self, content):
-        self.sock.sendto(bytes(content, encoding='utf-8'), self.conn)
+        self.sock.sendto(bytes(json.dumps(content), encoding='utf-8'), self.conn)
