@@ -5,9 +5,9 @@ import time
 
 
 class NetGameApi:
-    def __init__(self, username, gametype, receivingFunction, *args):
-        Thread.__init__()
-        self.receivingFunction
+    def __init__(self, username, gametype, receivingFunction):
+        Thread.__init__(self)
+        self.receivingFunction()
         self.username = username
         self.gametype = gametype
         self.output = ''
