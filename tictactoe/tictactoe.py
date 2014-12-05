@@ -1,7 +1,7 @@
 from gameserver.netgameapi import *
 
 import pygame, sys
-import pygame.locals
+
 
 
 
@@ -164,9 +164,9 @@ class TicTacToe:
                 #     self.action(2,2)
 
 
-global actionlist
-actionlist = [0,0,0,0,0,0,0,0,0]
-tictactoe = TicTacToe()
+# global actionlist
+# actionlist = [0,0,0,0,0,0,0,0,0]
+# tictactoe = TicTacToe()
 
 
 
