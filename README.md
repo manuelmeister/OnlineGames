@@ -21,12 +21,13 @@ NetGameAPI
 </code></pre>
 
 ###Connect to player
-Use <code>connectToPlayer(playername)</code>
+Use <code>connectToPlayer(playername)</code> to invite the other player
 <pre><code>
 {
     "action":"connect",
     "data":{
-        "username":"user_you_wish_to_connect"
+        "master": "your_username",
+        "opponent": "user_you_wish_to_connect"
     }
 }
 </code></pre>

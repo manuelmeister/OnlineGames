@@ -38,6 +38,13 @@ class NetGameApi:
         }
         self.model.send(dictionary)
 
+    def acceptGameInvitation(self):
+        dictionary = {
+            "action": "connection_established",
+            "data": content
+        }
+        self.model.send(dictionary)
+
     def submitGameData(self, content):
         dictionary = {
             "action": "gamedata",

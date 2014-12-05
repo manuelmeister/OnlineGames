@@ -3,7 +3,7 @@ import socket, threading, sys
 import datetime
 
 
-class ChatServer:
+class NetGameServer:
     def __init__(self, port=12345, host=""):
         threading.Thread.__init__(self)
         self.port = port
@@ -37,11 +37,11 @@ class ChatServer:
         while True:
             data = self.decode_JSON(client.recv(1024).decode("utf-8"))
             if data["action"] == "connect":
-                if self.users[data["data"]["username"]]["data"]["playing"] == 0:
+                if self.users[data["data"]["opponent"]]["data"]["playing"] == 0:
                     self.games.append({
                         username:{
                             "master": username,
-                            "players": [data["username"]],
+                            "players": [username, data["opponent"]],
                             "game": user["data"]["game"],
                             "startdatetime": datetime.now()
                         }
@@ -51,6 +51,8 @@ class ChatServer:
                     client.sendall(bytes(self.encode_JSON(self.error("notavailable", "User already ingame.")), encoding='utf-8'))
             elif data["action"] == "connection_established":
                 break
+            elif data["action"] == "connection_refused":
+                client.sendall(bytes(self.encode_JSON(self.error("connection_refused", "Your opponent refused.")),encoding='utf-8'))
             else:
                 client.sendall(
                     bytes(self.encode_JSON(self.error("notconnected", "You must connect to a player first.")),
@@ -149,5 +151,5 @@ class ChatServer:
 
 
 if __name__ == "__main__":
-    server = ChatServer()
+    server = NetGameServer()
     server.run()
