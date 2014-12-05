@@ -1,0 +1,6 @@
+{
+    "action":"connection_established",
+    "data":{
+        "username":"dinimueter"
+    }
+}

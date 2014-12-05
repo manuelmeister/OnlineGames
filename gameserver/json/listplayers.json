@@ -1,0 +1,7 @@
+{
+    "action": "listplayers",
+    "data": [
+        {"name": "henzi","game": "3gewinnt", "playing": 0},
+        {"name": "lukas","game": "3gewinnt", "playing": 1}
+    ]
+}

@@ -1,0 +1,7 @@
+{
+    "action":"error",
+    "data":{
+        "errorinfo":"doubleusername",
+        "helpmessage":"Please connect with different username."
+    }
+}
