@@ -38,8 +38,8 @@ Format of playerlist
 {
     "action": "listplayers",
     "data": [
-        {"name": "henzi","game": "3gewinnt", "playing": 0},
-        {"name": "lukas","game": "3gewinnt", "playing": 1}
+        {"playing": 0,"username": "manuel", "game": "tictactoe"},
+        {"playing": 1,"username": "lukas", "game": "tictactoe"}
     ]
 }
 </code></pre>
