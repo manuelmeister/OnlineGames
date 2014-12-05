@@ -41,12 +41,17 @@ class Gui:
     def reciever(self, data):
         print(data)
 
-        if data == "Username ok":
+        if data == "Playerliste":
             playerlist=data
             self.choose_player(playerlist)
 
         if data == "connect von anderem Player":
-            self.initialize_tictactoe(2)
+            username=data
+
+            if self.ok_boolean:
+                self.initialize_tictactoe(2)
+            else:
+                pass
 
         if data == "Game Start":
             self.initialize_tictactoe(1)
@@ -54,6 +59,34 @@ class Gui:
         if data == "player 2 hat gespielt":
             self.tictactoe.update_board()
             self.tictactoe.mainloop()
+
+    def ok(self, username):
+        self.okwindow = Tk()
+        self.okwindow.title('Anfrage')
+        self.txtOkScreen=Text(self.okwindow, height=4, width=20, bg="#bbbbbb")
+        self.txtOkScreen.pack(side=TOP)
+        self.txtOkScreen.insert(END, str(username)+" invited you to play a game")
+        self.cmdOk = Button(self.main, width=10, command=self.ok_bool_function, text="Ok")
+        self.cmdOk.pack(side=RIGHT)
+        self.cmdNotOk = Button(self.main, width=10, command=self.not_ok_bool_function, text="Abort")
+        self.cmdNotOk.pack(side=RIGHT)
+        self.txtScreen.insert(END, "Please choose your Username\n")
+        self.gui_choose_player_thread = Thread(name='choose_player', target=self.main.mainloop())
+
+    def ok_bool_function(self):
+        try:
+            self.okwindow.destroy()
+        except:
+            pass
+        self.ok_boolean=True
+
+    def not_ok_bool_function(self):
+        try:
+            self.okwindow.destroy()
+        except:
+            pass
+        self.ok_boolean=False
+
 
     def initialize_tictactoe(self, player):
         self.tictactoe = tictactoe2.TicTacToe(1)
