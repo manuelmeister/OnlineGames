@@ -37,25 +37,24 @@ class Gui:
         self.tcpthread.start()
 
 
-    def reciever(self, data):
-        print(data)
+    def reciever(self, content):
+        print(content)
 
-        if data == "Playerliste":
-            playerlist=data
-            self.choose_player(playerlist)
+        if content["action"] == "listplayers":
+            self.choose_player(content["data"])
 
-        if data == "connect von anderem Player":
-            username=data
+        if content == "connect von anderem Player":
+            username=content
 
             if self.ok_boolean:
                 self.initialize_tictactoe(2)
             else:
                 pass
 
-        if data == "Game Start":
+        if content == "Game Start":
             self.initialize_tictactoe(1)
 
-        if data == "player 2 hat gespielt":
+        if content == "player 2 hat gespielt":
             self.tictactoe.update_board()
             self.tictactoe.mainloop()
 
@@ -100,9 +99,11 @@ class Gui:
         self.main.title('WayUp GameStation')
         self.txtScreen=Text(self.main, height=20, width=50, bg="#bbbbbb")
         self.txtScreen.pack(side=TOP)
-        self.lstPlayerListe = Listbox(side=LEFT)
-        for i in range(len(self.playerlist)):
-            self.lstPlayerListe.insert(i, self.playerlist[i])
+        self.lstPlayerListe = Listbox(self.main)
+        i = 0
+        for player in self.playerlist:
+            self.lstPlayerListe.insert(i, player["username"] + "  " +  str(player["playing"]))
+            i+=1
         self.lstPlayerListe.pack()
         self.cmdSubmit = Button(self.main, width=10, command=self.connet_to_player, text="Submit")
         self.cmdSubmit.pack(side=RIGHT)
@@ -111,7 +112,8 @@ class Gui:
 
 
     def connet_to_player(self):
-        self.api.connet_to_player() # Api braucht noch entsprechende Funktion
+        playernumber=int(self.lstPlayerListe.curselection()[0])
+        self.api.connectToPlayer(self.playerlist[playernumber]["username"]) # Api braucht noch entsprechende Funktion
         self.main.destroy()
         self.initialize_tictactoe(1) # Player muss noch erkannt werden!
 
