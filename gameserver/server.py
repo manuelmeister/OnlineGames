@@ -26,12 +26,11 @@ class ChatServer:
     def threadrunner(self, username):
         user = self.users[username]
         client = user["connection"]
-        welcome = "User " + user["username"] + " connected on " + user["connection"][0] + ":" + str(
-            user["connection"][1])
+        welcome = "User " + username + " connected "
         print(welcome)
 
         roomlist = self.encode_JSON(self.listplayers())
-        for user in self.users:
+        for user in self.users.values():
             if user["data"]["playing"] == 0:
                 user["connection"].sendall(bytes(roomlist, encoding='utf-8'))
 
@@ -49,8 +48,7 @@ class ChatServer:
                     })
                     break
                 else:
-                    client.sendall(
-                        bytes(self.encode_JSON(self.error("notavailable", "User already ingame.")), encoding='utf-8'))
+                    client.sendall(bytes(self.encode_JSON(self.error("notavailable", "User already ingame.")), encoding='utf-8'))
             elif data["action"] == "connection_established":
                 break
             else:
@@ -88,7 +86,7 @@ class ChatServer:
             if content["action"] == "connection":
                 username = content["data"]["username"]
                 username_taken = False
-                for name in self.users:
+                for name in self.users.keys():
                     if name == username:
                         username_taken = True
 
@@ -98,10 +96,13 @@ class ChatServer:
                     client.close()
                 else:
                     self.users[username] = {
-                        "username": username,
-                        "game": content["data"]["game"],
                         "connection": client,
-                        "playing": 0
+                        "data": {
+                            "username": username,
+                            "game": content["data"]["game"],
+                            "playing": 0
+
+                        }
                     }
                     threading.Thread(target=self.threadrunner, args=(username,)).start()
             else:
@@ -126,10 +127,10 @@ class ChatServer:
     def listplayers(self, printAllPlayers=True):
         userlist = []
         if printAllPlayers:
-            for user in self.users:
+            for user in self.users.values():
                 userlist.append(user["data"])
         else:
-            for user in self.users:
+            for user in self.users.values():
                 if user["data"]["playing"] == 0:
                     userlist.append(user["data"])
 
