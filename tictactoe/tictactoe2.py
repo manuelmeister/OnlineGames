@@ -100,7 +100,8 @@ class TicTacToe:
             if not self.actionlist[fieldnumber] == 0:
                 break
             self.X("X", fieldnumber)
-
+            self.actionlist[fieldnumber]=1
+            print(self.actionlist)
             # for i in actionlist:
             #     if not i ==
 
@@ -119,8 +120,6 @@ class TicTacToe:
         self.board.blit(text, self.outputfield[fieldnumber])
 
         #update actionlist
-        self.actionlist[fieldnumber]=self.player
-        print(self.actionlist)
         pygame.display.update()
 
     def update(self, updated_list):
@@ -131,11 +130,20 @@ class TicTacToe:
                 self.actionlist[i] = updated_list[i]
                 break
         self.X("O",fieldnumber)
+        print(self.actionlist)
 
 
 
     def mainloop(self):
         mainloop_boolean=True
+        actioncounter=0
+        for i in self.actionlist:
+            if i == 0:
+                actioncounter+=1
+        if actioncounter%2==0 and self.player==2: #if player 1's and this is player 2
+            self.wait_for_player()
+            mainloop_boolean=False
+
         while mainloop_boolean:
             for event in pygame.event.get():
 
@@ -150,7 +158,7 @@ class TicTacToe:
                         mainloop_boolean=False
 
     def wait_for_player(self):
-        print("Please wait for your opponents action")
+        print("Please wait for your opponents action...")
 
 
                 # if event.type == pygame.MOUSEBUTTONDOWN:
