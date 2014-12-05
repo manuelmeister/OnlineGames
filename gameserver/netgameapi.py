@@ -64,6 +64,7 @@ class NetGameApi:
                 if not data_received:
                     break
                 output = self.decode_JSON(data_received.decode("utf-8"))
+                print(output)
                 self.receivingFunction(output)
 
             except socket.error:
