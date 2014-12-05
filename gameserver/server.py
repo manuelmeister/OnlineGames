@@ -86,9 +86,10 @@ class ChatServer:
             content = self.decode_JSON(client.recv(1024).decode("utf-8"))
 
             if content["action"] == "connection":
+                username = content["data"]["username"]
                 username_taken = False
                 for name in self.users:
-                    if name == content["info"]["username"]:
+                    if name == username:
                         username_taken = True
 
                 if username_taken:
@@ -96,13 +97,13 @@ class ChatServer:
                         bytes(self.encode_JSON(self.error("doubleusername", "Please connect first")), encoding='utf-8'))
                     client.close()
                 else:
-                    self.users[content["info"]["username"]] = {
-                        "username": content["info"]["username"],
-                        "game": content["info"]["game"],
+                    self.users[username] = {
+                        "username": username,
+                        "game": content["data"]["game"],
                         "connection": client,
                         "playing": 0
                     }
-                    threading.Thread(target=self.threadrunner, args=(content["info"]["username"])).start()
+                    threading.Thread(target=self.threadrunner, args=(username,)).start()
             else:
                 client.sendall(bytes(self.encode_JSON(self.error("Please connect first")), encoding='utf-8'))
                 client.close()
