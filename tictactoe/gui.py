@@ -41,8 +41,15 @@ class Gui:
     def reciever(self, data):
         print(data)
 
+        if data == "Username ok":
+            playerlist=data
+            self.choose_player(playerlist)
+
+        if data == "connect von anderem Player":
+            self.initialize_tictactoe(2)
+
         if data == "Game Start":
-            self.initialize_tictactoe(data)
+            self.initialize_tictactoe(1)
 
         if data == "player 2 hat gespielt":
             self.tictactoe.update_board()
@@ -51,7 +58,30 @@ class Gui:
     def initialize_tictactoe(self, player):
         self.tictactoe = tictactoe2.TicTacToe(1)
 
+    def choose_player(self,playerlist):
+        self.playerlist=playerlist
+        try:
+            self.main.destroy()
+        except:
+            pass
+        self.main = Tk()
+        self.main.title('WayUp GameStation')
+        self.txtScreen=Text(self.main, height=20, width=50, bg="#bbbbbb")
+        self.txtScreen.pack(side=TOP)
+        self.lstPlayerListe = Listbox(side=LEFT)
+        for i in range(len(self.playerlist)):
+            self.lstPlayerListe.insert(i, self.playerlist[i])
+        self.lstPlayerListe.pack()
+        self.cmdSubmit = Button(self.main, width=10, command=self.connet_to_player, text="Submit")
+        self.cmdSubmit.pack(side=RIGHT)
+        self.txtScreen.insert(END, "Please choose your Username\n")
+        self.gui_choose_player_thread = Thread(name='choose_player', target=self.main.mainloop())
 
+
+    def connet_to_player(self):
+        self.api.connet_to_player() # Api braucht noch entsprechende Funktion
+        self.main.destroy()
+        self.initialize_tictactoe(1) # Player muss noch erkannt werden!
 
 
 gamestation = Gui()
