@@ -6,7 +6,6 @@ import time
 
 class NetGameApi:
     def __init__(self, username, gametype, receivingFunction):
-        Thread.__init__(self)
         self.receivingFunction = receivingFunction()
         self.username = username
         self.gametype = gametype
@@ -56,7 +55,6 @@ class NetGameApi:
 
 class Model(object):
     def __init__(self, host, port):
-        Thread.__init__(self)
         self.host = host
         self.port = port
         self.conn = (host, port)
@@ -70,7 +68,7 @@ class Model(object):
         self.sock.close()
 
     def receive(self):
-        data = self.sock.recv(64)
+        data = self.sock.recv(1024)
         if not data:
             return False
         else:
