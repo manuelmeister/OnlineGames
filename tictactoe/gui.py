@@ -2,7 +2,7 @@
 from tkinter import *
 import threading
 from gameserver.netgameapi import *
-import tictactoe
+import tictactoe.tictactoe2 as tictactoe2
 
 #from multiprocessing.pool import ThreadPool
 #from functools import partial
@@ -45,10 +45,14 @@ class Gui:
         data = self.api.json_decode(jsonfile)
         print(data)
 
+        if data == "player 2 hat gespielt":
+            tictactoe2.update_board()
+            tictactoe2.mainloop()
+
     def initialize_tictactoe(self):
         global actionlist
         actionlist = [0,0,0,0,0,0,0,0,0]
-        self.tictactoe = tictactoe.TicTacToe()
+        self.tictactoe = tictactoe2.TicTacToe()
 
 
 
