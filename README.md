@@ -12,13 +12,16 @@ Embed the API with:
 
 ##Transmitting Data
 
-1. Create a instance of the netgameapi class [optional parameters]
+1. Create a instance of the netgameapi class [optional parameters]  
 <code>self.api = NetGameApi(username, "game title", lambda: self.reciever, [ip.address.of.server], [serverport])
 </code>
 
-2. Connect to server
+2. Connect to server  
 <code>self.api.makeConnection()
 </code>
+    * If the username is already taken you'll get the error 'doubleusername'
+
+
 
 
 ###Make a connection using makeConnection()
