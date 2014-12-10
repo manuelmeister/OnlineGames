@@ -26,7 +26,8 @@ Embed the API with:
 <code>self.tcpthread = Thread(name='tcp', target=self.api.startReceiving())
 </code>
 
-
+4. **You'll receive the [playerlist](#listplayers)**   
+   It will only contain the players that play your game and are currently not playing  
 
 
 
@@ -53,7 +54,7 @@ Use <code>connectToPlayer(playername)</code> to invite the other player
 </code></pre>
 
 
-###Playerlist
+###<a name="listplayers">Playerlist</a>
 Format of playerlist
 <pre><code>{
     "action": "listplayers",
