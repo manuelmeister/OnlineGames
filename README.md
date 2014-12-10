@@ -3,10 +3,22 @@ NetGameAPI
 
 ##Install
 
+Add the gameserver folder to your Project
+
+Embed the API with:
+
 <code>from gameserver.netgameapi import *
 </code>
 
 ##Transmitting Data
+
+1. Create a instance of the netgameapi class [optional parameters]
+<code>self.api = NetGameApi(username, "game title", lambda: self.reciever, [ip.address.of.server], [serverport])
+</code>
+
+2. Connect to server
+<code>self.api.makeConnection()
+</code>
 
 
 ###Make a connection using makeConnection()
@@ -20,6 +32,7 @@ NetGameAPI
 }
 </code></pre>
 
+
 ###Connect to player
 Use <code>connectToPlayer(playername)</code> to invite the other player
 <pre><code>
@@ -31,6 +44,7 @@ Use <code>connectToPlayer(playername)</code> to invite the other player
     }
 }
 </code></pre>
+
 
 ###Playerlist
 Format of playerlist
