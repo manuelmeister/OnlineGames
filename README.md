@@ -63,9 +63,10 @@ Format of playerlist
     ]
 }
 </code></pre>
-
+  
 ###<a name="errors">Error</a>
 Errors returned by the server
+####doubleusername
 <pre><code>{
     "action":"error",
     "data":{
