@@ -13,7 +13,7 @@ Embed the API with:
 ##Transmitting Data
 
 1. Create a instance of the netgameapi class [optional parameters]  
-<code>self.api = NetGameApi(username, "game title", lambda: self.reciever, [ip.address.of.server], [serverport])
+<code>self.api = NetGameApi("name", "game", lambda: self.reciever, [serveraddress], [port])
 </code>
 
 2. Connect to server  
