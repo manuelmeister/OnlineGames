@@ -31,8 +31,7 @@ Embed the API with:
 
 
 ###Make a connection using makeConnection()
-<pre><code>
-{
+<pre><code>{
     "action":"connection",
     "data":{
         "username":"your_username",
@@ -44,8 +43,7 @@ Embed the API with:
 
 ###Connect to player
 Use <code>connectToPlayer(playername)</code> to invite the other player
-<pre><code>
-{
+<pre><code>{
     "action":"connect",
     "data":{
         "master": "your_username",
@@ -57,8 +55,7 @@ Use <code>connectToPlayer(playername)</code> to invite the other player
 
 ###Playerlist
 Format of playerlist
-<pre><code>
-{
+<pre><code>{
     "action": "listplayers",
     "data": [
         {"playing": 0,"username": "manuel", "game": "tictactoe"},
@@ -69,8 +66,7 @@ Format of playerlist
 
 ###<a name="errors">Error</a>
 Errors returned by the server
-<pre><code>
-{
+<pre><code>{
     "action":"error",
     "data":{
         "errorinfo":"doubleusername",
