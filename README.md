@@ -12,22 +12,32 @@ Embed the API with:
 
 ##Transmitting Data
 
-1. **Create a instance of the netgameapi class** \[optional parameters\]  
-   self.reciever is a function with one parameter, the parameter is in the protocol standart dictionary form  
-<code>self.api = NetGameApi("name", "game", lambda: self.reciever, \[serveraddress\], \[port\])
+1. **Create a instance of the netgameapi class**  
+<code>api = NetGameApi(name, game, lambda: receiver, \[address\], \[port\])
 </code>  
+    * <code>name</code>     = your username  
+    * <code>game</code>     = name of your game
+    * <code>receiver</code> = a function with one parameter, the parameter is in the protocol dictionary form  
+    * <code>address</code>  = the ip address or the domainname of the server \[optional\]  
+    * <code>port</code>     = port of the server \[optional\]  
   
 2. **Connect to server**  
-<code>self.api.makeConnection()
+<code>api.makeConnection()
 </code>
     * If the username is already taken you'll get the [error](#errors) 'doubleusername'
     
 3. **Make a new Thread that listens to the server**  
-<code>self.tcpthread = Thread(name='tcp', target=self.api.startReceiving())
+<code>tcpthread = Thread(name='tcp', target=api.startReceiving())
 </code>
 
 4. **You'll receive the [playerlist](#listplayers)**   
    It will only contain the players that play your game and are currently not playing  
+   
+5. **Select a player from the playerlist**  
+   Use the username given in the playerlist  
+<code>api.connectToPlayer(username_of_opponent)
+</code>
+
 
 
 
