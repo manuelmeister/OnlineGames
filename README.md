@@ -18,7 +18,7 @@ Embed the API with:
 _parameters_  
     * <code>name</code>     = your username  
     * <code>game</code>     = name of your game
-    * <code>receiver</code> = a function with one parameter, the parameter is in the protocol standart dictionary form  
+    * <code>receiver</code> = a function with one parameter, the parameter is in the protocol dictionary form  
     * <code>address</code>  = the ip address or the domainname of the server \[optional\]  
     * <code>port</code>     = port of the server \[optional\]  
   
