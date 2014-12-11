@@ -5,21 +5,24 @@ import time
 
 
 class NetGameApi:
-    def __init__(self, username, gametype, receivingFunction):
-        self.receivingFunction = receivingFunction()
+    def __init__(self, username, gametype, receivingFunction, host = 'localhost', port = 12345):
         self.username = username
         self.gametype = gametype
+        self.receivingFunction = receivingFunction()
+        self.host = host
+        self.port = port
         self.output = ''
         self.newInstance()
 
     def newInstance(self):
-        self.model = Model('localhost', 12345)
+        self.model = Model(self.host, self.port)
         self.model.connect()
 
     def decode_JSON(self, string):
         return json.loads(string)
 
     def makeConnection(self):
+        time.sleep(.42)
         dictionary = {
             "action": "connection",
             "data": {
