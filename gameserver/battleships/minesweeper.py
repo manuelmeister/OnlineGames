@@ -9,7 +9,7 @@ class Minesweeper:
         pygame.display.set_caption("minesweeper")
 
 
-        self.screen_width=800
+        self.screen_width=1500
         self.screen_height=900
         self.board = pygame.display.set_mode((self.screen_width,self.screen_height))
 
@@ -19,7 +19,7 @@ class Minesweeper:
         self.GREEN = (0, 255, 0)
         self.BLUE = (0, 0, 255)
         self.GREY = (150, 150, 150)
-        self.BSFontheigt=100
+        self.BSFontheigt=40
         self.BSFont = pygame.font.SysFont(None, self.BSFontheigt)
 
         self.board.fill(self.WHITE)
@@ -28,7 +28,7 @@ class Minesweeper:
 
         self.board.blit(TITLE_SURF, TITLE_RECT)
 
-        self.coords=self.create_coords(self.screen_width,10,10,0,100)
+        self.coords=self.create_coords(self.screen_width,30,25,0,100)
         print(self.coords)
 
         self.actionlist=[]
@@ -60,10 +60,10 @@ class Minesweeper:
 
 
     def set_random_mines(self):
-        for i in range(5):
+        for i in range(40):
             mine_position = randint(0,self.coords["xcount"]*self.coords["ycount"]-1)
             self.mineslist[mine_position]=1
-            self.fill_rect(mine_position, self.RED)
+            #self.fill_rect(mine_position, self.RED)
         return self.mineslist
 
 
@@ -91,7 +91,7 @@ class Minesweeper:
             for j in test_list:
                 try:
 
-                    if self.mineslist[j] == 1 and j >= 0 and j <= 99:
+                    if self.mineslist[j] == 1 and j >= 0 and j <= self.coords["xcount"]*self.coords["xcount"]-1:
                         counter+=1
                 except:
                     pass
@@ -101,15 +101,16 @@ class Minesweeper:
         print(i)
         xcount=self.coords["xcount"]
         test_list=[i-1-xcount+0, i-1-xcount+1, i-1-xcount+2, i-1, i+1, i+1+xcount+0, i+1+xcount-1, i+1+xcount-2]
-        if self.actionlist[i]==0:
-            if self.minestestlist[i] > 0:
-                self.fill_rect(i, self.GREY, str(self.minestestlist[i]))
-                self.actionlist[i]=1
-            elif self.minestestlist[i] == 0:
-                self.fill_rect(i, self.BLUE)
-                self.actionlist[i]=1
-                for j in test_list:
-                    self.test_rect(j)
+        if i >= 0 and i <= self.coords["xcount"]*self.coords["xcount"]-1:
+            if self.actionlist2[i]==0:
+                if self.minestestlist[i] > 0:
+                    self.fill_rect(i, self.GREY, str(self.minestestlist[i]))
+                    self.actionlist2[i]=1
+                elif self.minestestlist[i] == 0:
+                    self.fill_rect(i, self.BLUE)
+                    self.actionlist2[i]=1
+                    for j in test_list:
+                        self.test_rect(j)
 
         else:
             return
@@ -138,7 +139,7 @@ class Minesweeper:
         for i in range(self.squarecount):
             pygame.draw.rect(self.board, self.WHITE, (self.coords[i][0],self.coords[i][1],self.coords["squarelength"],self.coords["squarelength"]))
             pygame.draw.rect(self.board, self.BLACK, (self.coords[i][0],self.coords[i][1],self.coords["squarelength"],self.coords["squarelength"]),5)
-            time.sleep(0.01)
+            time.sleep(0.0001)
             pygame.display.update()
 
 
@@ -167,12 +168,13 @@ class Minesweeper:
 
 
     def fill_rect(self, i, color, text=""):
-        pygame.draw.rect(self.board, color, (self.coords[i][0],self.coords[i][1],self.coords["squarelength"],self.coords["squarelength"]))
-        pygame.draw.rect(self.board, self.BLACK, (self.coords[i][0],self.coords[i][1],self.coords["squarelength"],self.coords["squarelength"]),5)
+        if i >= 0 and i <= self.coords["xcount"]*self.coords["xcount"]-1:
+            pygame.draw.rect(self.board, color, (self.coords[i][0],self.coords[i][1],self.coords["squarelength"],self.coords["squarelength"]))
+            pygame.draw.rect(self.board, self.BLACK, (self.coords[i][0],self.coords[i][1],self.coords["squarelength"],self.coords["squarelength"]),5)
 
-        if text!="":
-            TITLE_SURF, TITLE_RECT = self.makeText(text, self.BLACK, self.GREY, self.coords[i][0]+10,self.coords[i][1]+5)
-            self.board.blit(TITLE_SURF, TITLE_RECT)
+            if text!="":
+                TITLE_SURF, TITLE_RECT = self.makeText(text, self.BLACK, self.GREY, self.coords[i][0]+10,self.coords[i][1]+5)
+                self.board.blit(TITLE_SURF, TITLE_RECT)
 
         pygame.display.update()
 
