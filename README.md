@@ -15,8 +15,6 @@ Embed the API with:
 1. **Create a instance of the netgameapi class**  
 <code>api = NetGameApi(name, game, lambda: receiver, \[address\], \[port\])
 </code>  
-  
-_Parameters_
     * <code>name</code>     = your username  
     * <code>game</code>     = name of your game
     * <code>receiver</code> = a function with one parameter, the parameter is in the protocol dictionary form  
