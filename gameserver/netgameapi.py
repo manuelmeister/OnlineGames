@@ -1,11 +1,10 @@
 import json
 import socket
-from threading import Thread
 import time
 
 
 class NetGameApi:
-    def __init__(self, username, gametype, receivingFunction, host = 'localhost', port = 12345):
+    def __init__(self, username, gametype, receivingFunction, host='localhost', port=12345):
         self.username = username
         self.gametype = gametype
         self.receivingFunction = receivingFunction()
@@ -32,19 +31,32 @@ class NetGameApi:
         }
         self.model.send(dictionary)
 
-    def connectToPlayer(self, playername):
+    def getPlayerList(self, game = 'all', notInGame = True):
         dictionary = {
-            "action": "connect",
+            "action": "getplayerlist",
             "data": {
-                "username": playername
+                "game": game,
+                "playing": notInGame
             }
         }
         self.model.send(dictionary)
 
-    def acceptGameInvitation(self):
+    def connectToPlayer(self, playername):
+        dictionary = {
+            "action": "connect",
+            "data": {
+                "master": self.username,
+                "opponent": playername
+            }
+        }
+        self.model.send(dictionary)
+
+    def acceptGameInvitation(self, username):
         dictionary = {
             "action": "connection_established",
-            "data": content
+            "data": {
+                "username": username
+            }
         }
         self.model.send(dictionary)
 
@@ -56,7 +68,7 @@ class NetGameApi:
         self.model.send(dictionary)
 
     def askForUsername(self):
-        #give input
+        # give input
         pass
 
     def startReceiving(self):
@@ -72,6 +84,7 @@ class NetGameApi:
 
             except socket.error:
                 break
+
 
 class Model(object):
     def __init__(self, host, port):

@@ -1,7 +1,6 @@
 {
     "action":"connect",
     "data":{
-        "master": "your_username",
         "opponent": "user_you_wish_to_connect"
     }
 }
