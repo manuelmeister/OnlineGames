@@ -12,6 +12,7 @@ class Board:
         self.screen_width=1000
         self.header_height=200
         self.xcount=30
+
         self.ycount=20
 
         self.borderwidth=3 #in pixel
