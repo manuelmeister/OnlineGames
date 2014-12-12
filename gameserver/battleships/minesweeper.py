@@ -14,8 +14,8 @@ class Minesweeper:
         self.xcount=30
         self.ycount=20
         self.screen_height=int(self.screen_width/self.xcount)*self.ycount+self.header_height
-        self.borderwidt=10 #in % of square width
-        self.minescount=int((self.xcount*self.ycount)/2)
+        self.borderwidth=3 #in % of square width
+        self.minescount=int((self.xcount*self.ycount)/10)
         self.MWFontheigt=int(self.screen_width/self.xcount)
         self.MWTextFontheigt=pygame.font.SysFont(None, int(self.screen_width/self.xcount))
         self.board = pygame.display.set_mode((self.screen_width,self.screen_height))
