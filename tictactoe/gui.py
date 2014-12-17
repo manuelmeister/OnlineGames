@@ -124,7 +124,7 @@ class Gui:
         self.main.title('WayUp GameStation')
         self.txtScreen = Text(self.main, height=20, width=50, bg="#bbbbbb")
         self.txtScreen.pack(side=TOP)
-        self.txtScreen.insert(END, self.ScreenText)
+        self.txtScreen.insert(END, self.ScreenText + "\n")
         self.playerlist=playerlist
         self.lstPlayerListe = Listbox(self.main)
         i = 0
@@ -134,7 +134,7 @@ class Gui:
         self.lstPlayerListe.pack()
         self.cmdConnect = Button(self.main, width=10, command=self.connet_to_player, text="Connect")
         self.cmdConnect.pack(side=RIGHT)
-        self.txtScreen.insert(END, "connected as " + str(self.playername))
+        self.txtScreen.insert(END, "connected as " + str(self.playername) + "\n")
         self.main.mainloop()
 
 
@@ -145,7 +145,7 @@ class Gui:
         playernumber=int(self.lstPlayerListe.curselection()[0])
         print(self.playerlist[playernumber]["username"])
         self.api.connectToPlayer(self.playerlist[playernumber]["username"])
-        self.txtScreen.insert(END, "wait for your connection...")
+        self.txtScreen.insert(END, "wait for your connection..."+"\n")
 
 
 
