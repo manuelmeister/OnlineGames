@@ -51,6 +51,15 @@ class NetGameApi:
         }
         self.model.send(dictionary)
 
+    def connectionEstablished(self, playername):
+        dictionary = {
+            "action": "connecttion_established",
+            "data": {
+                "opponent": playername
+            }
+        }
+        self.model.send(dictionary)
+
     def acceptGameInvitation(self, username):
         dictionary = {
             "action": "connect_established",
