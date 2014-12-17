@@ -32,12 +32,14 @@ class NetGameServer:
         welcome = "User " + username + " connected "
         print(welcome)
 
+        #generate roomlist and send back
         roomlist = self.encode_JSON(self.listplayers(False, user["data"]["game"]))
         for user in self.users.values():
             if user["data"]["playing"] == 0:
                 user["connection"].sendall(bytes(roomlist, encoding='utf-8'))
 
         client.setblocking(0)
+        #set timeout to 4.2 seconds
         ready = select.select(client, [], [], 4.2)
         while True:
             if ready[0]:
@@ -46,57 +48,62 @@ class NetGameServer:
             else:
                 data = None
 
-            # when the other player accepts
-            if self.games[username]["active"] == True:
-                break
+            #if receiving hasn't timed out
+            if data is not None:
 
-            # master asks to connect to opponent
-            elif data["action"] == "connect":
-                if opponent["data"]["playing"] == 0:
+                # when the other player accepts
+                if self.games[username]["active"] == True:
+
+                    #exit while loop and start listening for gamedata
+                    break
+
+                # master asks to connect to opponent
+                elif data["action"] == "connect":
+                    if opponent["data"]["playing"] == 0:
+
+                        # server sends GameInvitation to opponent
+                        opponent["connection"].sendall(
+                            bytes(self.encode_JSON(self.connect(username)), encoding='utf-8'))
+
+                        #game gets added (inactive)
+                        self.games.append({
+                            username: {
+                            "master": username,
+                            "players": [ username, data["opponent"]],
+                            "game": user["data"]["game"],
+                            "active": False,
+                            "startdatetime": False
+                            }
+                        })
+
+                    else:
+                        client.sendall(
+                            bytes(self.encode_JSON(self.error("notavailable", "User already ingame.")), encoding='utf-8'))
+
+                #opponent accepts connect from master
+                elif data["action"] == "connect_accepted":
+
+                    #send connect established to master
                     opponent["connection"].sendall(
-                        bytes(self.encode_JSON(self.connect(username)), encoding='utf-8'))
-                    #game gets added
-                    self.games.append({
-                        username: {
-                        "master": username,
-                        "players": [ username, data["opponent"]],
-                        "game": user["data"]["game"],
-                        "active": False,
-                        "startdatetime": False
-                        }
-                    })
+                        bytes(self.encode_JSON(
+                            self.established(username)), encoding='utf-8'))
 
-                else:
-                    client.sendall(
-                        bytes(self.encode_JSON(self.error("notavailable", "User already ingame.")), encoding='utf-8'))
+                    #activate game
+                    self.games[data["data"]["opponent"]]["active"] = True
 
-            #opponent accepts connect from master
-            elif data["action"] == "connect_accepted":
-                #send connect established to master
-                opponent["connection"].sendall(
-                    bytes(self.encode_JSON(
-                        self.established(username)), encoding='utf-8'))
+                    #break while and starts listening to client
+                    break
 
-                #start game
-                self.games[opponent["username"]]["active"] = True
-                break
-
-            #opponen refuses connect from master
-            elif data["action"] == "connection_refused":
-                opponent["connection"].sendall(
-                    bytes(self.encode_JSON(
-                        self.error("connection_refused", "Your opponent refused.")),
-                          encoding='utf-8'))
-
-            #when no connection is made or some other error occurs that I didn't catch
-            else:
-                client.sendall(
-                    bytes(self.encode_JSON(self.error("notconnected", "You must connect to a player first.")),
-                          encoding='utf-8'))
+                #opponent refuses connect from master
+                elif data["action"] == "connection_refused":
+                    opponent["connection"].sendall(
+                        bytes(self.encode_JSON(
+                            self.error("connection_refused", "Your opponent refused.")),
+                              encoding='utf-8'))
 
         user["playing"] = 1
-        self.user[self.games[username]["players"][0]] = 1
 
+        #start listening for gamedata
         while True:
             try:
                 data = client.recv(1024)
@@ -108,8 +115,19 @@ class NetGameServer:
                     print(user["username"], "disconnected")
                     break
                 print(data.decode("utf-8"))
-                for player in self.games["players"]:
-                    self.users[player].sendall(data)
+
+                #checks if the player is sending gamedata
+                if data["action"] == "gamedata":
+                    for player in self.games["players"]:
+                        if player != username:
+                            self.users[player]["connection"].sendall(data)
+
+                #other actions are currently not allowed
+                else:
+                    client.sendall(
+                        bytes(self.encode_JSON(self.error("action_not_allowed", "This action is currently not possible.")), encoding='utf-8'))
+
+
             except:
                 pass
 
