@@ -53,9 +53,18 @@ class NetGameApi:
 
     def acceptGameInvitation(self, username):
         dictionary = {
-            "action": "connection_established",
+            "action": "connect_established",
             "data": {
-                "username": username
+                "opponent": username
+            }
+        }
+        self.model.send(dictionary)
+
+    def refuseGameInvitation(self, username):
+        dictionary = {
+            "action": "connect_refused",
+            "data": {
+                "opponent": username
             }
         }
         self.model.send(dictionary)
@@ -66,10 +75,6 @@ class NetGameApi:
             "data": content
         }
         self.model.send(dictionary)
-
-    def askForUsername(self):
-        # give input
-        pass
 
     def startReceiving(self):
         data_received = True
