@@ -8,8 +8,9 @@ Add the gameserver folder to your Project
 
 Embed the API with:
 
-<code>from gameserver.netgameapi import \*
-</code>
+ ```python
+ from gameserver.netgameapi import *
+ ```
 
 </br>
 ---
@@ -17,30 +18,26 @@ Transmitting Data
 ------
 
 1. **Create a instance of the netgameapi class**  
-<code>api = NetGameApi(name, game, lambda: receiver, \[address\], \[port\])
-</code>  
-    * <code>name</code>     = your username  
-    * <code>game</code>     = name of your game
-    * <code>receiver</code> = a function with one parameter, the parameter is in the protocol dictionary form  
-    * <code>address</code>  = the ip address or the domainname of the server \[optional\]  
-    * <code>port</code>     = port of the server \[optional\]  
+ ```api = NetGameApi(name, game, lambda: receiver, \[address\], \[port\]) ```  
+    *  ```name ```     = your username  
+    *  ```game ```     = name of your game
+    *  ```receiver ``` = a function with one parameter, the parameter is in the protocol dictionary form  
+    *  ```address ```  = the ip address or the domainname of the server \[optional\]  
+    *  ```port ```     = port of the server \[optional\]  
   
 2. **Connect to server**  
-<code>api.makeConnection()
-</code>
+   ```api.makeConnection() ```
     * If the username is already taken you'll get the [error doubleusername](#error.doubleusername)
     
 3. **Make a new Thread that listens to the server**  
-<code>tcpthread = Thread(name='tcp', target=api.startReceiving())
-</code>
+    ```tcpthread = Thread(name='tcp', target=api.startReceiving()) ```
 
 4. **You'll receive the [playerlist](#listplayers)**   
    It will only contain the players that play your game and are currently not playing  
    
 5. **Select a player from the playerlist**  
    Use the username given in the playerlist  
-<code>api.connectToPlayer(username_of_opponent)
-</code>
+   ```api.connectToPlayer(username_of_opponent) ```
 
 6. **Server Processing**  
     * The server checks if your opponent already is ingame. If he already is, the [error notavailable](#error.notavailable) gets thrown
@@ -49,16 +46,18 @@ Transmitting Data
     * Your opponent can either [accept](#accept) or [refuse](#refuse) the invitation
     * If he accepts, then you'll receive a [connection_established](#connection_established)
     * If he refuses, then you'll receive the [error connection_refused](#error.connection_refused)
-    
-8. **Now you can send your Gamedata**  
-<code>api.submitGameData(content)
-</code>
+
+8. **Inform server, that you are now ready to play**  
+   Send the server ```connectionEstablished(opponent) ```
+
+9. **Now you can send your Gamedata**  
+    ```api.submitGameData(content) ```
 
 </br>
 ---
 Protocol
 ------
-###Make a connection using makeConnection()
+###Make a connection using  ```makeConnection() ```
 ```python
 {
     "action":"connection",
@@ -70,7 +69,7 @@ Protocol
 ```
 
 ###Connect to player  
-Use <code>connectToPlayer(user_you_wish_to_connect)</code> to invite the other player
+Use  ```connectToPlayer(user_you_wish_to_connect) ``` to invite the other player
 ```python
 {
     "action":"connect",
@@ -82,7 +81,7 @@ Use <code>connectToPlayer(user_you_wish_to_connect)</code> to invite the other p
 ```
 
 ###<a name="gameinvitation">Game Invitation</a>  
-You'll receive this if the master player sends a <code>connectToPlayer(user_requesting_connection)</code> to the server
+You'll receive this if the master player sends a  ```connectToPlayer(user_requesting_connection) ``` to the server
 ```python
 {
     "action": "gameinvitation",
@@ -93,7 +92,7 @@ You'll receive this if the master player sends a <code>connectToPlayer(user_requ
 ```
 
 ###<a name="accept">Accept Game Invitation</a>  
-You accept the invitation with <code>acceptGameInvitation(user_requesting_connection)</code>
+You accept the invitation with  ```acceptGameInvitation(user_requesting_connection) ```
 ```python
 {
             "action": "connect_accepted",
@@ -104,7 +103,7 @@ You accept the invitation with <code>acceptGameInvitation(user_requesting_connec
 ```
 
 ###<a name="refuse">Refuse Game Invitation</a>  
-You refuse the invitation with <code>refuseGameInvitation(user_requesting_connection)</code>
+You refuse the invitation with  ```refuseGameInvitation(user_requesting_connection) ```
 ```python
 {
             "action": "connect_refused",
