@@ -46,15 +46,26 @@ class NetGameServer:
             else:
                 data = None
 
-
-            if data == None:
-                pass
+            # when the other player accepts
+            if self.games[username]["active"] == True:
+                break
 
             # master asks to connect to opponent
             elif data["action"] == "connect":
                 if opponent["data"]["playing"] == 0:
                     opponent["connection"].sendall(
                         bytes(self.encode_JSON(self.connect(username)), encoding='utf-8'))
+                    #game gets added
+                    self.games.append({
+                        username: {
+                        "master": username,
+                        "players": [ username, data["opponent"]],
+                        "game": user["data"]["game"],
+                        "active": False,
+                        "startdatetime": False
+                        }
+                    })
+
                 else:
                     client.sendall(
                         bytes(self.encode_JSON(self.error("notavailable", "User already ingame.")), encoding='utf-8'))
@@ -66,15 +77,8 @@ class NetGameServer:
                     bytes(self.encode_JSON(
                         self.established(username)), encoding='utf-8'))
 
-                #game gets added
-                self.games.append({
-                    username: {
-                        "master": data["opponent"],
-                        "players": [data["opponent"], username],
-                        "game": user["data"]["game"],
-                        "startdatetime": datetime.now()
-                    }
-                })
+                #start game
+                self.games[opponent["username"]]["active"] = True
                 break
 
             #opponen refuses connect from master
