@@ -29,6 +29,7 @@ class Gui:
 
     def connect(self):
         username = self.txtInput.get()
+        self.playername=username
         self.txtScreen.insert(END, "connecting...\n")
         self.main.update()
         #try:
@@ -107,20 +108,23 @@ class Gui:
 
 
     def choose_player(self,playerlist):
-        self.txtInput.destroy()
-        self.cmdSubmit.destroy()
-        self.playerlist=playerlist
-        self.lstPlayerListe = Listbox(self.main)
-        i = 0
-        for player in self.playerlist:
-            self.lstPlayerListe.insert(i, player["username"] + "  " +  str(player["playing"]))
-            i+=1
-        self.lstPlayerListe.pack()
-        self.cmdConnect = Button(self.main, width=10, command=self.connet_to_player, text="Connect")
-        self.cmdConnect.pack(side=RIGHT)
-        self.txtScreen.insert(END, "connected as " + str(player["username"]))
-        self.main.update()
-        print("updated")
+        try:
+            self.txtInput.destroy()
+            self.cmdSubmit.destroy()
+            self.playerlist=playerlist
+            self.lstPlayerListe = Listbox(self.main)
+            i = 0
+            for player in self.playerlist:
+                self.lstPlayerListe.insert(i, player["username"] + "  " +  str(player["playing"]))
+                i+=1
+            self.lstPlayerListe.pack()
+            self.cmdConnect = Button(self.main, width=10, command=self.connet_to_player, text="Connect")
+            self.cmdConnect.pack(side=RIGHT)
+            self.txtScreen.insert(END, "connected as " + str(player["username"]))
+            self.main.update()
+            print("updated")
+        except:
+            pass
 
 
     def connet_to_player(self):
