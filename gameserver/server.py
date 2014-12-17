@@ -40,7 +40,7 @@ class NetGameServer:
 
         client.setblocking(0)
         #set timeout to 4.2 seconds
-        ready = select.select(client, [], [], 4.2)
+        ready = select.select([client], [], [], 4.2)
         while True:
             if ready[0]:
                 data = self.decode_JSON(client.recv(1024).decode("utf-8"))
