@@ -134,110 +134,110 @@ class NetGameServer:
         client.close()
 
 
-def run(self):
-    print("Waiting for connections on port", self.port)
-    while True:
-        client, addr = self.sock.accept()
-        content = self.decode_JSON(client.recv(1024).decode("utf-8"))
+    def run(self):
+        print("Waiting for connections on port", self.port)
+        while True:
+            client, addr = self.sock.accept()
+            content = self.decode_JSON(client.recv(1024).decode("utf-8"))
 
-        if content["action"] == "connection":
-            username = content["data"]["username"]
-            username_taken = False
-            for name in self.users.keys():
-                if name == username:
-                    username_taken = True
+            if content["action"] == "connection":
+                username = content["data"]["username"]
+                username_taken = False
+                for name in self.users.keys():
+                    if name == username:
+                        username_taken = True
 
-            if username_taken:
-                client.sendall(
-                    bytes(self.encode_JSON(self.error("doubleusername", "Please connect first")), encoding='utf-8'))
-                client.close()
-            else:
-                self.users[username] = {
-                    "connection": client,
-                    "data": {
-                        "username": username,
-                        "game": content["data"]["game"],
-                        "playing": 0
+                if username_taken:
+                    client.sendall(
+                        bytes(self.encode_JSON(self.error("doubleusername", "Please connect first")), encoding='utf-8'))
+                    client.close()
+                else:
+                    self.users[username] = {
+                        "connection": client,
+                        "data": {
+                            "username": username,
+                            "game": content["data"]["game"],
+                            "playing": 0
 
+                        }
                     }
-                }
-                threading.Thread(target=self.threadrunner, args=(username,)).start()
-        else:
-            client.sendall(bytes(self.encode_JSON(self.error("Please connect first")), encoding='utf-8'))
-            client.close()
+                    threading.Thread(target=self.threadrunner, args=(username,)).start()
+            else:
+                client.sendall(bytes(self.encode_JSON(self.error("Please connect first")), encoding='utf-8'))
+                client.close()
 
 
-def decode_JSON(self, string):
-    return json.loads(string)
+    def decode_JSON(self, string):
+        return json.loads(string)
 
 
-def encode_JSON(self, object):
-    return json.dumps(object)
+    def encode_JSON(self, object):
+        return json.dumps(object)
 
 
-def error(self, string, message):
-    return {
-        "action": "error",
-        "data": {
-            "errorinfo": string,
-            "helpmessage": message
+    def error(self, string, message):
+        return {
+            "action": "error",
+            "data": {
+                "errorinfo": string,
+                "helpmessage": message
+            }
         }
-    }
 
 
-def listplayers(self, printAllPlayers=True, currentGame=False):
-    userlist = []
-    if printAllPlayers:
-        if currentGame:
-            for user in self.users.values():
-                if user["data"]["game"] == currentGame:
-                    userlist.append(user["data"])
-        else:
-            for user in self.users.values():
-                userlist.append(user["data"])
-
-    else:
-        if currentGame:
-            for user in self.users.values():
-                if user["data"]["playing"] == 0:
+    def listplayers(self, printAllPlayers=True, currentGame=False):
+        userlist = []
+        if printAllPlayers:
+            if currentGame:
+                for user in self.users.values():
                     if user["data"]["game"] == currentGame:
                         userlist.append(user["data"])
-        else:
-            for user in self.users.values():
-                if user["data"]["playing"] == 0:
+            else:
+                for user in self.users.values():
                     userlist.append(user["data"])
 
-    return {
-        "action": "listplayers",
-        "data": userlist
-    }
+        else:
+            if currentGame:
+                for user in self.users.values():
+                    if user["data"]["playing"] == 0:
+                        if user["data"]["game"] == currentGame:
+                            userlist.append(user["data"])
+            else:
+                for user in self.users.values():
+                    if user["data"]["playing"] == 0:
+                        userlist.append(user["data"])
 
-
-def connect(self, user):
-    return {
-        "action": "gameinvitation",
-        "data": {
-            "master": user
+        return {
+            "action": "listplayers",
+            "data": userlist
         }
-    }
 
 
-def established(self, username):
-    return {
-        "action": "connection_established",
-        "data": {
-            "username": username
+    def connect(self, user):
+        return {
+            "action": "gameinvitation",
+            "data": {
+                "master": user
+            }
         }
-    }
 
 
-def disconnect(self, user):
-    return {
-        "action": "disconnect",
-        "data": {
-            "username": user
+    def established(self, username):
+        return {
+            "action": "connection_established",
+            "data": {
+                "username": username
+            }
         }
-    }
+
+
+    def disconnect(self, user):
+        return {
+            "action": "disconnect",
+            "data": {
+                "username": user
+            }
+        }
 
 
 if __name__ == "__main__":
