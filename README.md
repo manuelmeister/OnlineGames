@@ -53,6 +53,7 @@ Transmitting Data
 8. **Now you can send your Gamedata**  
 <code>api.submitGameData(content)
 </code>
+
 </br>
 ---
 Protocol
