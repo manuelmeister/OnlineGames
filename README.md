@@ -1,5 +1,6 @@
 NetGameAPI
 ==========
+The NetGameAPI is currently not optimized for realtime data transfer
 
 ##Install
 
@@ -24,7 +25,7 @@ Embed the API with:
 2. **Connect to server**  
 <code>api.makeConnection()
 </code>
-    * If the username is already taken you'll get the [error](#errors) 'doubleusername'
+    * If the username is already taken you'll get the [error doubleusername](#error.doubleusername)
     
 3. **Make a new Thread that listens to the server**  
 <code>tcpthread = Thread(name='tcp', target=api.startReceiving())
@@ -38,11 +39,17 @@ Embed the API with:
 <code>api.connectToPlayer(username_of_opponent)
 </code>
 
-6. **The server now processes the username in the game list**
-   * he checks if the player is already ingame
-   * 
+6. **Server Processing**  
+    * The server checks if your opponent already is ingame. If he is the [error notavailable](#error.notavailable) gets thrown
 
-
+7. **Your opponent receives your connect as a [gameinvitation](#gameinvitation)**  
+    * Your opponent can either [accept](#accept) or [refuse](#refuse) the invitation
+    * If he accepts, then you'll receive a [connection_established](#connection_established)
+    * If he refuses, then you'll receive the [error connection_refused](#error.connection_refused)
+    
+8. **Now you can send your Gamedata**  
+<code>api.submitGameData(content)
+</code>
 
 ###Make a connection using makeConnection()
 <pre><code>{
@@ -53,7 +60,6 @@ Embed the API with:
     }
 }
 </code></pre>
-
 
 ###Connect to player
 Use <code>connectToPlayer(playername)</code> to invite the other player
@@ -66,26 +72,85 @@ Use <code>connectToPlayer(playername)</code> to invite the other player
 }
 </code></pre>
 
+###<a name="gameinvitation">Game Invitation</a>
+You'll receive this if the master player sends a <code>connectToPlayer(playername)</code> to the server
+<pre><code>{
+    "action": "gameinvitation",
+    "data": {
+        "master": "user_requesting_connection"
+    }
+}
+</code></pre>
+
+###<a name="accept">Accept Game Invitation</a>
+You accept the invitation with <code>acceptGameInvitation(user_requesting_connection)</code>
+<pre><code>{
+            "action": "connect_accepted",
+            "data": {
+                "opponent": user_requesting_connection
+     }
+}
+</code></pre>
+
+###<a name="refuse">Refuse Game Invitation</a>
+You refuse the invitation with <code>refuseGameInvitation(user_requesting_connection)</code>
+<pre><code>{
+            "action": "connect_refused",
+            "data": {
+                "opponent": user_requesting_connection
+     }
+}
+</code></pre>
+
+###<a name="connection_established">Connection to opponent established</a>
+<pre><code>{
+{
+    "action":"connection_established",
+    "data":{
+        "username":"opponent_username"
+    }
+}
+</code></pre>
 
 ###<a name="listplayers">Playerlist</a>
 Format of playerlist
 <pre><code>{
     "action": "listplayers",
-    "data": [
+    "data": \[
         {"playing": 0,"username": "manuel", "game": "tictactoe"},
         {"playing": 1,"username": "lukas", "game": "tictactoe"}
-    ]
+    \]
 }
 </code></pre>
   
 ###<a name="errors">Error</a>
 Errors returned by the server
-####doubleusername
+####<a name="error.doubleusername">doubleusername</a>
 <pre><code>{
     "action":"error",
     "data":{
         "errorinfo":"doubleusername",
         "helpmessage":"Please connect with different username."
+    }
+}
+</code></pre>
+
+####<a name="error.notavailable">notavailable</a>
+<pre><code>{
+    "action":"error",
+    "data":{
+        "errorinfo":"notavailable",
+        "helpmessage":"User already ingame."
+    }
+}
+</code></pre>
+
+####<a name="error.connection_refused">connection_refused</a>
+<pre><code>{
+    "action":"error",
+    "data":{
+        "errorinfo":"connection_refused",
+        "helpmessage":"Your opponent refused."
     }
 }
 </code></pre>
