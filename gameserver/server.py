@@ -55,10 +55,11 @@ class NetGameServer:
                 print(raw)
 
                 # when the other player accepts
-                if self.games[username]["active"] == True:
+                if username in self.games:
+                    if self.games[username]["active"] == True:
 
-                    #exit while loop and start listening for gamedata
-                    break
+                        #exit while loop and start listening for gamedata
+                        break
 
                 # master asks to connect to opponent
                 elif data["action"] == "connect":
@@ -165,7 +166,7 @@ class NetGameServer:
 
                         }
                     }
-                    threading.Thread(target=self.threadrunner, args=(username,)).start()
+                    threading.Thread(target=self.threadrunner, name=username, args=(username,)).start()
             else:
                 client.sendall(bytes(self.encode_JSON(self.error("Please connect first")), encoding='utf-8'))
                 client.close()
