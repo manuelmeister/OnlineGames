@@ -30,12 +30,15 @@ class Gui:
     def connect(self):
         username = self.txtInput.get()
         self.txtScreen.insert(END, "connecting...\n")
-
-        self.api = NetGameApi(username, "tictactoe", lambda: self.reciever)
-        time.sleep(.42)
-        self.api.makeConnection()
-        self.tcpthread = Thread(name='tcp', target=self.api.startReceiving())
-        self.tcpthread.start()
+        self.main.update()
+        try:
+            self.api = NetGameApi(username, "tictactoe", lambda: self.reciever)
+            time.sleep(.42)
+            self.api.makeConnection()
+            self.tcpthread = Thread(name='tcp', target=self.api.startReceiving())
+            self.tcpthread.start()
+        except:
+            self.txtScreen.insert(END, "connection failed\n")
 
 
     def reciever(self, content):
@@ -46,6 +49,7 @@ class Gui:
 
         if content["action"] == "gameinvitation":
             username = content["data"]["master"]
+            self.txtScreen.insert(END, "would you like to accept this game invitation?")
             self.ok_boolean=FALSE
             self.ok(username)
             if self.ok_boolean:
@@ -57,6 +61,10 @@ class Gui:
 
 
         if content["action"] == "connect_accepted":
+            try:
+                self.main.destroy()
+            except:
+                pass
             self.initialize_tictactoe(2)
 
 
@@ -99,15 +107,9 @@ class Gui:
 
 
     def choose_player(self,playerlist):
+        self.strInput.destroy()
+        self.cmdSubmit.destroy()
         self.playerlist=playerlist
-        try:
-            self.main.destroy()
-        except:
-            pass
-        self.main = Tk()
-        self.main.title('WayUp GameStation')
-        self.txtScreen=Text(self.main, height=20, width=50, bg="#bbbbbb")
-        self.txtScreen.pack(side=TOP)
         self.lstPlayerListe = Listbox(self.main)
         i = 0
         for player in self.playerlist:
@@ -121,10 +123,12 @@ class Gui:
 
 
     def connet_to_player(self):
+
         playernumber=int(self.lstPlayerListe.curselection()[0])
-        self.api.connectToPlayer(self.playerlist[playernumber]["username"]) # Api braucht noch entsprechende Funktion
-        self.main.destroy()
-        self.initialize_tictactoe(1) # Player muss noch erkannt werden!
+        print(self.playerlist[playernumber]["username"])
+        self.api.connectToPlayer(self.playerlist[playernumber]["username"])
+        self.txtScreen.insert(END, "wait for your connection...")
+
 
 
 gamestation = Gui()
