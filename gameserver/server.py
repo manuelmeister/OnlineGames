@@ -13,7 +13,7 @@ class NetGameServer:
         self.host = host
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.users = {}
-        self.games = []
+        self.games = {}
 
         try:
             self.sock.bind((self.host, self.port))
@@ -43,13 +43,16 @@ class NetGameServer:
         ready = select.select([client], [], [], 4.2)
         while True:
             if ready[0]:
-                data = self.decode_JSON(client.recv(1024).decode("utf-8"))
+                raw = client.recv(1024).decode("utf-8")
+                data = self.decode_JSON(raw)
                 opponent = self.users[data["data"]["opponent"]]
             else:
                 data = None
 
             #if receiving hasn't timed out
             if data is not None:
+
+                print(raw)
 
                 # when the other player accepts
                 if self.games[username]["active"] == True:
@@ -66,15 +69,15 @@ class NetGameServer:
                             bytes(self.encode_JSON(self.connect(username)), encoding='utf-8'))
 
                         #game gets added (inactive)
-                        self.games.append({
-                            username: {
+                        self.gameHost = username
+                        self.games[username] = {
                             "master": username,
                             "players": [ username, data["opponent"]],
                             "game": user["data"]["game"],
                             "active": False,
                             "startdatetime": False
                             }
-                        })
+
 
                     else:
                         client.sendall(
@@ -89,7 +92,8 @@ class NetGameServer:
                             self.established(username)), encoding='utf-8'))
 
                     #activate game
-                    self.games[data["data"]["opponent"]]["active"] = True
+                    self.gameHost = data["data"]["opponent"]
+                    self.games[self.gameHost]["active"] = True
 
                     #break while and starts listening to client
                     break
@@ -118,7 +122,7 @@ class NetGameServer:
 
                 #checks if the player is sending gamedata
                 if data["action"] == "gamedata":
-                    for player in self.games["players"]:
+                    for player in self.games[self.gameHost]["players"]:
                         if player != username:
                             self.users[player]["connection"].sendall(data)
 
