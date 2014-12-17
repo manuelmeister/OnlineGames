@@ -139,7 +139,8 @@ Format of playerlist
 
 </br>
 ---
-###<a name="errors">Error</a>  
+Errors
+------
 Errors returned by the server
 ####<a name="error.doubleusername">doubleusername</a>
 ```python
