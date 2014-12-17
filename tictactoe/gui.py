@@ -1,6 +1,7 @@
 
 from tkinter import *
 import threading
+from threading import Thread
 from gameserver.netgameapi import *
 import tictactoe2
 
@@ -43,17 +44,24 @@ class Gui:
         if content["action"] == "listplayers":
             self.choose_player(content["data"])
 
-        if content["action"] == "connection":
-            username = content["data"]["username"]
+        if content["action"] == "gameinvitation":
+            username = content["data"]["master"]
             self.ok_boolean=FALSE
             self.ok(username)
             if self.ok_boolean:
+                self.api.acceptGameInvitation(username)
                 self.initialize_tictactoe(2)
             else:
+                self.api.refuseGameInvitation(username)
                 pass
 
         # if content == "Game Start":
         #     self.initialize_tictactoe(1)
+
+
+        if content["action"] == "connect_accepted":
+
+
 
         if content["action"] == "gamedata":
             self.tictactoe.update_board(content["data"])
