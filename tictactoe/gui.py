@@ -61,6 +61,12 @@ class Gui:
                 self.api.refuseGameInvitation(username)
                 pass
 
+        if content["action"] == "connection_established":
+            #Api: send back "connection established
+            #initialize game as player 2
+            #delete initialize() line 74
+            #check/compare line 59
+            pass
 
         if content["action"] == "connect_accepted":
             try:
@@ -104,7 +110,7 @@ class Gui:
 
 
     def initialize_tictactoe(self, player):
-        self.tictactoe = tictactoe2.TicTacToe(1)
+        self.tictactoe = tictactoe2.TicTacToe(player)
 
 
 
