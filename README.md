@@ -11,8 +11,8 @@ Embed the API with:
 <code>from gameserver.netgameapi import \*
 </code>
 
+</br>
 ---
-
 Transmitting Data
 ------
 
@@ -53,7 +53,7 @@ Transmitting Data
 8. **Now you can send your Gamedata**  
 <code>api.submitGameData(content)
 </code>
-
+</br>
 ---
 Protocol
 ------
@@ -69,24 +69,24 @@ Protocol
 ```
 
 ###Connect to player  
-Use <code>connectToPlayer(playername)</code> to invite the other player
+Use <code>connectToPlayer(user_you_wish_to_connect)</code> to invite the other player
 ```python
 {
     "action":"connect",
     "data":{
         "master": "your_username",
-        "opponent": "user_you_wish_to_connect"
+        "opponent": user_you_wish_to_connect
     }
 }
 ```
 
 ###<a name="gameinvitation">Game Invitation</a>  
-You'll receive this if the master player sends a <code>connectToPlayer(playername)</code> to the server
+You'll receive this if the master player sends a <code>connectToPlayer(user_requesting_connection)</code> to the server
 ```python
 {
     "action": "gameinvitation",
     "data": {
-        "master": "user_requesting_connection"
+        "master": user_requesting_connection
     }
 }
 ```
@@ -129,13 +129,14 @@ Format of playerlist
 ```python
 {
     "action": "listplayers",
-    "data": \[
+    "data": [
         {"playing": 0,"username": "manuel", "game": "tictactoe"},
         {"playing": 1,"username": "lukas", "game": "tictactoe"}
-    \]
+    ]
 }
 ```
-  
+
+</br>
 ---
 ###<a name="errors">Error</a>  
 Errors returned by the server
