@@ -50,17 +50,14 @@ class Gui:
             self.ok(username)
             if self.ok_boolean:
                 self.api.acceptGameInvitation(username)
-                self.initialize_tictactoe(2)
+                self.initialize_tictactoe(1)
             else:
                 self.api.refuseGameInvitation(username)
                 pass
 
-        # if content == "Game Start":
-        #     self.initialize_tictactoe(1)
-
 
         if content["action"] == "connect_accepted":
-
+            self.initialize_tictactoe(2)
 
 
         if content["action"] == "gamedata":
@@ -97,6 +94,9 @@ class Gui:
 
     def initialize_tictactoe(self, player):
         self.tictactoe = tictactoe2.TicTacToe(1)
+
+
+
 
     def choose_player(self,playerlist):
         self.playerlist=playerlist
