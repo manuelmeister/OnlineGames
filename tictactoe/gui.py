@@ -25,7 +25,9 @@ class Gui:
         self.cmdSubmit = Button(self.main, width=10, command=self.connect, text="Submit")
         self.cmdSubmit.pack(side=RIGHT)
         self.txtScreen.insert(END, "Please choose your Username\n")
-        self.gui_mainloop_thread = Thread(name='gui_mainloop', target=self.main.mainloop())
+        #self.gui_mainloop_thread = Thread(name='gui_mainloop', target=self.main.mainloop())
+        #self.gui_mainloop_thread.start()
+        self.main.mainloop()
 
     def connect(self):
         username = self.txtInput.get()
@@ -36,8 +38,7 @@ class Gui:
         self.api = NetGameApi(username, "tictactoe", lambda: self.reciever)
         time.sleep(.42)
         self.api.makeConnection()
-        self.tcpthread = Thread(name='tcp', target=self.api.startReceiving())
-        self.tcpthread.start()
+        Thread(name='tcp', target=self.api.startReceiving()).start()
         #except:
             #self.txtScreen.insert(END, "connection failed\n")
 
@@ -84,7 +85,8 @@ class Gui:
         self.cmdNotOk = Button(self.main, width=10, command=self.not_ok_bool_function, text="Abort")
         self.cmdNotOk.pack(side=RIGHT)
         self.txtScreen.insert(END, "Please choose your Username\n")
-        self.gui_choose_player_thread = Thread(name='choose_player', target=self.main.mainloop())
+        self.okwindow.mainloop()
+        #self.gui_choose_player_thread = Thread(name='choose_player', target=self.main.mainloop()) ????????
 
     def ok_bool_function(self):
         try:
@@ -108,23 +110,34 @@ class Gui:
 
 
     def choose_player(self,playerlist):
+
+        self.ScreenText = self.txtScreen.get("1.0", END)
+
+
         try:
-            self.txtInput.destroy()
-            self.cmdSubmit.destroy()
-            self.playerlist=playerlist
-            self.lstPlayerListe = Listbox(self.main)
-            i = 0
-            for player in self.playerlist:
-                self.lstPlayerListe.insert(i, player["username"] + "  " +  str(player["playing"]))
-                i+=1
-            self.lstPlayerListe.pack()
-            self.cmdConnect = Button(self.main, width=10, command=self.connet_to_player, text="Connect")
-            self.cmdConnect.pack(side=RIGHT)
-            self.txtScreen.insert(END, "connected as " + str(player["username"]))
-            self.main.update()
-            print("updated")
+            self.main.destroy()
         except:
             pass
+
+
+        self.main = Tk()
+        self.main.title('WayUp GameStation')
+        self.txtScreen = Text(self.main, height=20, width=50, bg="#bbbbbb")
+        self.txtScreen.pack(side=TOP)
+        self.txtScreen.insert(END, self.ScreenText)
+        self.playerlist=playerlist
+        self.lstPlayerListe = Listbox(self.main)
+        i = 0
+        for player in self.playerlist:
+            self.lstPlayerListe.insert(i, player["username"] + "  " +  str(player["playing"]))
+            i+=1
+        self.lstPlayerListe.pack()
+        self.cmdConnect = Button(self.main, width=10, command=self.connet_to_player, text="Connect")
+        self.cmdConnect.pack(side=RIGHT)
+        self.txtScreen.insert(END, "connected as " + str(self.playername))
+        self.main.mainloop()
+
+
 
 
     def connet_to_player(self):
