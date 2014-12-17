@@ -38,6 +38,9 @@ Embed the API with:
 <code>api.connectToPlayer(username_of_opponent)
 </code>
 
+6. **The server now processes the username in the game list**
+   * he checks if the player is already ingame
+   * 
 
 
 
