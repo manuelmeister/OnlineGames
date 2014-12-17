@@ -2,8 +2,6 @@ import json
 import socket
 import threading
 import sys
-import datetime
-import select
 
 
 class NetGameServer:
@@ -32,79 +30,70 @@ class NetGameServer:
         welcome = "User " + username + " connected "
         print(welcome)
 
-        #generate roomlist and send back
+        # generate roomlist and send back
         roomlist = self.encode_JSON(self.listplayers(False, user["data"]["game"]))
         for user in self.users.values():
             if user["data"]["playing"] == 0:
                 user["connection"].sendall(bytes(roomlist, encoding='utf-8'))
 
         client.setblocking(0)
-        #set timeout to 4.2 seconds
-        ready = select.select([client], [], [], 4.2)
         while True:
-            if ready[0]:
-                raw = client.recv(2048).decode("utf-8")
-                data = self.decode_JSON(raw)
-                opponent = self.users[data["data"]["opponent"]]
-            else:
-                data = None
+            raw = client.recv(2048).decode("utf-8")
+            data = self.decode_JSON(raw)
+            opponent = self.users[data["data"]["opponent"]]
 
-            #if receiving hasn't timed out
-            if data is not None:
+            print(raw)
 
-                print(raw)
-
-                # when the other player accepts
-                if username in self.games:
-                    if self.games[username]["active"] == True:
-
-                        #exit while loop and start listening for gamedata
-                        break
-
-                # master asks to connect to opponent
-                elif data["action"] == "connect":
-                    if opponent["data"]["playing"] == 0:
-
-                        # server sends GameInvitation to opponent
-                        opponent["connection"].sendall(
-                            bytes(self.encode_JSON(self.connect(username)), encoding='utf-8'))
-
-                        #game gets added (inactive)
-                        self.gameHost = username
-                        self.games[username] = {
-                            "master": username,
-                            "players": [ username, data["opponent"]],
-                            "game": user["data"]["game"],
-                            "active": False,
-                            "startdatetime": False
-                            }
-
-
-                    else:
-                        client.sendall(
-                            bytes(self.encode_JSON(self.error("notavailable", "User already ingame.")), encoding='utf-8'))
-
-                #opponent accepts connect from master
-                elif data["action"] == "connect_accepted":
-
-                    #send connect established to master
-                    opponent["connection"].sendall(
-                        bytes(self.encode_JSON(
-                            self.established(username)), encoding='utf-8'))
-
-                    #activate game
-                    self.gameHost = data["data"]["opponent"]
-                    self.games[self.gameHost]["active"] = True
-
-                    #break while and starts listening to client
+            # when the other player accepts
+            if data["action"] == "connection_established":
+                if self.games[username]["active"] == True:
+                    #exit while loop and start listening for gamedata
                     break
 
-                #opponent refuses connect from master
-                elif data["action"] == "connection_refused":
+            # master asks to connect to opponent
+            elif data["action"] == "connect":
+                if opponent["data"]["playing"] == 0:
+
+                    # server sends GameInvitation to opponent
                     opponent["connection"].sendall(
-                        bytes(self.encode_JSON(
-                            self.error("connection_refused", "Your opponent refused.")),
-                              encoding='utf-8'))
+                        bytes(self.encode_JSON(self.connect(username)), encoding='utf-8'))
+
+                    #game gets added (inactive)
+                    self.gameHost = username
+                    self.games[username] = {
+                        "master": username,
+                        "players": [username, data["opponent"]],
+                        "game": user["data"]["game"],
+                        "active": False,
+                        "startdatetime": False
+                    }
+
+
+                else:
+                    client.sendall(
+                        bytes(self.encode_JSON(self.error("notavailable", "User already ingame.")), encoding='utf-8'))
+
+            #opponent accepts connect from master
+            elif data["action"] == "connect_accepted":
+
+                #send connect established to master
+                opponent["connection"].sendall(
+                    bytes(self.encode_JSON(
+                        self.established(username)), encoding='utf-8'))
+
+                #activate game
+                self.gameHost = data["data"]["opponent"]
+                self.games[self.gameHost]["active"] = True
+
+                #break while and starts listening to client
+                break
+
+            #opponent refuses connect from master
+            elif data["action"] == "connection_refused":
+                opponent["connection"].sendall(
+                    bytes(self.encode_JSON(
+                        self.error("connection_refused", "Your opponent refused.")),
+                          encoding='utf-8'))
 
         user["playing"] = 1
 
@@ -130,7 +119,9 @@ class NetGameServer:
                 #other actions are currently not allowed
                 else:
                     client.sendall(
-                        bytes(self.encode_JSON(self.error("action_not_allowed", "This action is currently not possible.")), encoding='utf-8'))
+                        bytes(self.encode_JSON(
+                            self.error("action_not_allowed", "This action is currently not possible.")),
+                              encoding='utf-8'))
 
 
             except:
