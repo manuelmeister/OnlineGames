@@ -43,7 +43,7 @@ class NetGameServer:
         ready = select.select([client], [], [], 4.2)
         while True:
             if ready[0]:
-                raw = client.recv(1024).decode("utf-8")
+                raw = client.recv(2048).decode("utf-8")
                 data = self.decode_JSON(raw)
                 opponent = self.users[data["data"]["opponent"]]
             else:
@@ -110,7 +110,7 @@ class NetGameServer:
         #start listening for gamedata
         while True:
             try:
-                data = client.recv(1024)
+                data = client.recv(2048)
                 if not data:
                     client.close()
                     del self.users[username]
@@ -142,7 +142,7 @@ class NetGameServer:
         print("Waiting for connections on port", self.port)
         while True:
             client, addr = self.sock.accept()
-            content = self.decode_JSON(client.recv(1024).decode("utf-8"))
+            content = self.decode_JSON(client.recv(2048).decode("utf-8"))
 
             if content["action"] == "connection":
                 username = content["data"]["username"]

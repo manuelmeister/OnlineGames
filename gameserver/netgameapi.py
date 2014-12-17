@@ -106,7 +106,7 @@ class Model(object):
         self.sock.close()
 
     def receive(self):
-        data = self.sock.recv(1024)
+        data = self.sock.recv(2048)
         if not data:
             return False
         else:
