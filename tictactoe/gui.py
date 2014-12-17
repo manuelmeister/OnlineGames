@@ -31,14 +31,14 @@ class Gui:
         username = self.txtInput.get()
         self.txtScreen.insert(END, "connecting...\n")
         self.main.update()
-        try:
-            self.api = NetGameApi(username, "tictactoe", lambda: self.reciever)
-            time.sleep(.42)
-            self.api.makeConnection()
-            self.tcpthread = Thread(name='tcp', target=self.api.startReceiving())
-            self.tcpthread.start()
-        except:
-            self.txtScreen.insert(END, "connection failed\n")
+        #try:
+        self.api = NetGameApi(username, "tictactoe", lambda: self.reciever)
+        time.sleep(.42)
+        self.api.makeConnection()
+        self.tcpthread = Thread(name='tcp', target=self.api.startReceiving())
+        self.tcpthread.start()
+        #except:
+            #self.txtScreen.insert(END, "connection failed\n")
 
 
     def reciever(self, content):
@@ -107,7 +107,7 @@ class Gui:
 
 
     def choose_player(self,playerlist):
-        self.strInput.destroy()
+        self.txtInput.destroy()
         self.cmdSubmit.destroy()
         self.playerlist=playerlist
         self.lstPlayerListe = Listbox(self.main)
@@ -116,10 +116,11 @@ class Gui:
             self.lstPlayerListe.insert(i, player["username"] + "  " +  str(player["playing"]))
             i+=1
         self.lstPlayerListe.pack()
-        self.cmdSubmit = Button(self.main, width=10, command=self.connet_to_player, text="Connect")
-        self.cmdSubmit.pack(side=RIGHT)
-        self.txtScreen.insert(END, "Please choose your Username\n")
-        self.gui_choose_player_thread = Thread(name='choose_player', target=self.main.mainloop())
+        self.cmdConnect = Button(self.main, width=10, command=self.connet_to_player, text="Connect")
+        self.cmdConnect.pack(side=RIGHT)
+        self.txtScreen.insert(END, "connected as " + str(player["username"]))
+        self.main.update()
+        print("updated")
 
 
     def connet_to_player(self):
