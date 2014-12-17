@@ -1,0 +1,7 @@
+{
+    "action":"connect_accepted",
+    "data":{
+        "username": "your_username",
+        "opponent": "user_which_requested_the_game"
+    }
+}
