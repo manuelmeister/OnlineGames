@@ -13,12 +13,11 @@ Embed the API with:
  ```
 
 </br>
----
 Transmitting Data
 ------
 
 1. **Create a instance of the netgameapi class**  
- ```api = NetGameApi(name, game, lambda: receiver, \[address\], \[port\]) ```  
+ ```api = NetGameApi(name, game, lambda: receiver, [address], [port]) ```  
     *  ```name ```     = your username  
     *  ```game ```     = name of your game
     *  ```receiver ``` = a function with one parameter, the parameter is in the protocol dictionary form  
@@ -54,7 +53,6 @@ Transmitting Data
     ```api.submitGameData(content) ```
 
 </br>
----
 Protocol
 ------
 ###Make a connection using  ```makeConnection() ```
@@ -137,7 +135,6 @@ Format of playerlist
 ```
 
 </br>
----
 Errors
 ------
 Errors returned by the server

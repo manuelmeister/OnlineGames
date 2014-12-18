@@ -3,20 +3,21 @@ from random import *
 from datetime import datetime
 
 class Minesweeper:
-    def __init__(self):
+    def __init__(self, screen_width, header_height, xcount, ycount, mines_percent, border_width):
         pygame.init()
 
 
         pygame.display.set_caption("minesweeper")
 
 
-        self.screen_width=1000
-        self.header_height=200
-        self.xcount=30
-        self.ycount=20
+        self.screen_width=screen_width
+        self.header_height=header_height
+        self.xcount=xcount
+        self.ycount=ycount
         self.screen_height=int(self.screen_width/self.xcount)*self.ycount+self.header_height
-        self.borderwidth=3 #in pixels
-        self.minescount=int((self.xcount*self.ycount)/10)
+        self.mines_percent=mines_percent
+        self.minescount=int((self.xcount*self.ycount)/100*self.mines_percent)
+        self.borderwidth=border_width #in pixels
         self.MWFontheigt=int(self.screen_width/self.xcount)
         self.MWTextFontheigt=pygame.font.SysFont(None, int(self.screen_width/self.xcount))
         self.board = pygame.display.set_mode((self.screen_width,self.screen_height))
@@ -69,7 +70,10 @@ class Minesweeper:
 
 
 
-        TITLE_SURF, TITLE_RECT = self.makeText('number of mines: '+str(self.minescount), self.BLACK, self.WHITE, 0, int(self.header_height/2)+1, self.MWTextFontheigt)
+        TITLE_SURF, TITLE_RECT = self.makeText('number of mines: '+str(self.minescount), self.BLACK, self.WHITE, 10, int(self.header_height/2)+1, self.MWTextFontheigt)
+        self.board.blit(TITLE_SURF, TITLE_RECT)
+
+        TITLE_SURF, TITLE_RECT = self.makeText('left click: choose    right click: flag', self.BLACK, self.WHITE, 10, int(self.header_height/4*3)+1, self.MWTextFontheigt)
         self.board.blit(TITLE_SURF, TITLE_RECT)
 
         pygame.display.update()
@@ -274,7 +278,7 @@ class Minesweeper:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN and mousex in xrange and mousey in yrange:
-                    self.__init__()
+                    self.__init__(self.screen_width, self.header_height, self.xcount, self.ycount, self.mines_percent, self.borderwidth)
 
     def flag(self, i):
         if (self.flaglist[i] == 0) and (self.automatic_action_list[i] == 0) and (self.user_action_lilst[i] == 0):
@@ -314,4 +318,4 @@ class Minesweeper:
 
 
 
-minesweeper = Minesweeper()
+minesweeper = Minesweeper(1000, 200, 30, 20, 10, 1)
