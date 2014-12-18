@@ -1,5 +1,6 @@
 {
     "connection":"<socket.socket fd=608, family=AddressFamily.AF_INET, type=SocketType.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 12345), raddr=('127.0.0.1', 5299)>",
+    "address": ["localhost",12345],
     "data":{
         "username":"dinimueter",
         "game":"3gewinnt",
