@@ -24,9 +24,8 @@ class NetGameServer:
     def exit(self):
         self.sock.close()
 
-    def threadrunner(self, username):
+    def threadrunner(self, username, client, addr):
         user = self.users[username]
-        client = user["connection"]
         welcome = "User " + username + " connected "
         print(welcome)
 
@@ -37,9 +36,10 @@ class NetGameServer:
                 user["connection"].sendall(bytes(roomlist, encoding='utf-8'))
 
         while True:
+            client.setblocking(1)
             raw = client.recv(2048).decode("utf-8")
             data = self.decode_JSON(raw)
-            opponent = self.users[data["data"]["opponent"]]
+            self.opponent = self.users[data["data"]["opponent"]]
 
             print(raw)
 
@@ -51,11 +51,11 @@ class NetGameServer:
 
             # master asks to connect to opponent
             elif data["action"] == "connect":
-                if opponent["data"]["playing"] == 0:
+                if self.opponent["data"]["playing"] == 0:
 
                     # server sends GameInvitation to opponent
-                    opponent["connection"].sendall(
-                        bytes(self.encode_JSON(self.connect(username)), encoding='utf-8'))
+                    print(self.opponent["connection"].sendall(
+                        bytes(self.encode_JSON(self.connect(username)), encoding='utf-8')))
 
                     #game gets added (inactive)
                     self.gameHost = username
@@ -76,7 +76,7 @@ class NetGameServer:
             elif data["action"] == "connect_accepted":
 
                 #send connect established to master
-                opponent["connection"].sendall(
+                self.opponent["connection"].sendto(
                     bytes(self.encode_JSON(
                         self.established(username)), encoding='utf-8'))
 
@@ -89,7 +89,7 @@ class NetGameServer:
 
             #opponent refuses connect from master
             elif data["action"] == "connection_refused":
-                opponent["connection"].sendall(
+                self.opponent["connection"].sendto(
                     bytes(self.encode_JSON(
                         self.error("connection_refused", "Your opponent refused.")),
                           encoding='utf-8'))
@@ -149,6 +149,7 @@ class NetGameServer:
                 else:
                     self.users[username] = {
                         "connection": client,
+                        "address": addr,
                         "data": {
                             "username": username,
                             "game": content["data"]["game"],
@@ -156,7 +157,7 @@ class NetGameServer:
 
                         }
                     }
-                    threading.Thread(target=self.threadrunner, name=username, args=(username,)).start()
+                    threading.Thread(target=self.threadrunner, name=username, args=(username, client, addr)).start()
             else:
                 client.sendall(bytes(self.encode_JSON(self.error("Please connect first")), encoding='utf-8'))
                 client.close()

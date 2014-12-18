@@ -49,6 +49,7 @@ class NetGameApi:
                 "opponent": playername
             }
         }
+        print(dictionary)
         self.model.send(dictionary)
 
     def connectionEstablished(self, playername):
