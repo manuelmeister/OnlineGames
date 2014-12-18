@@ -44,7 +44,7 @@ class Gui:
 
 
     def reciever(self, content):
-        print(content)
+
 
         if content["action"] == "listplayers":
             self.choose_player(content["data"])
