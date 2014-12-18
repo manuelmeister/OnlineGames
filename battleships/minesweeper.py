@@ -16,7 +16,7 @@ class Minesweeper:
         self.ycount=20
         self.screen_height=int(self.screen_width/self.xcount)*self.ycount+self.header_height
         self.borderwidth=3 #in pixels
-        self.minescount=20#int((self.xcount*self.ycount)/10)
+        self.minescount=int((self.xcount*self.ycount)/10)
         self.MWFontheigt=int(self.screen_width/self.xcount)
         self.MWTextFontheigt=pygame.font.SysFont(None, int(self.screen_width/self.xcount))
         self.board = pygame.display.set_mode((self.screen_width,self.screen_height))
@@ -173,7 +173,7 @@ class Minesweeper:
 
 
 
-    def choose_rect(self, i, color, text=""):
+    def choose_rect(self, i, color, text="", bgcolor=(150, 150, 150)):
 
         self.user_action_lilst[i]=1
         if self.user_action_lilst[i] == self.mineslist[i]:
@@ -184,7 +184,7 @@ class Minesweeper:
         pygame.draw.rect(self.board, self.BLACK, (self.coords[i][0],self.coords[i][1],self.coords["squarelength"],self.coords["squarelength"]),self.borderwidth)
 
         if text!="":
-            counter_surf, counter_rect = self.makeText(text, self.BLACK, self.GREY, self.coords[i][0]+10,self.coords[i][1]+5, self.MWFont)
+            counter_surf, counter_rect = self.makeText(text, self.BLACK, bgcolor, self.coords[i][0]+10,self.coords[i][1]+5, self.MWFont)
 
             self.board.blit(counter_surf, counter_rect)
 
@@ -204,19 +204,19 @@ class Minesweeper:
         self.win_screen()
 
     def win_screen(self):
-        TITLE_SURF, TITLE_RECT = self.makeText('You Win!      ', self.BLACK, self.WHITE, 0, int(self.header_height/2)+1, self.MWTextFontheigt)
+        TITLE_SURF, TITLE_RECT = self.makeText('You Win!               ', self.BLACK, self.WHITE, 0, int(self.header_height/2)+1, self.MWTextFontheigt)
         self.board.blit(TITLE_SURF, TITLE_RECT)
         pygame.display.update()
         self.play_again()
 
 
-    def fill_rect(self, i, color, text=""):
+    def fill_rect(self, i, color, text="", bgcolor=(150, 150, 150)):
         if i >= 0 and i <= self.coords["xcount"]*self.coords["xcount"]-1:
             pygame.draw.rect(self.board, color, (self.coords[i][0],self.coords[i][1],self.coords["squarelength"],self.coords["squarelength"]))
             pygame.draw.rect(self.board, self.BLACK, (self.coords[i][0],self.coords[i][1],self.coords["squarelength"],self.coords["squarelength"]),self.borderwidth)
 
             if text!="":
-                TITLE_SURF, TITLE_RECT = self.makeText(text, self.BLACK, self.GREY, self.coords[i][0]+10,self.coords[i][1]+5, self.MWTextFontheigt)
+                TITLE_SURF, TITLE_RECT = self.makeText(text, self.BLACK, bgcolor, self.coords[i][0]+10,self.coords[i][1]+5, self.MWTextFontheigt)
                 self.board.blit(TITLE_SURF, TITLE_RECT)
 
         pygame.display.update()
@@ -277,9 +277,9 @@ class Minesweeper:
                     self.__init__()
 
     def flag(self, i):
-        if (self.flaglist[i] == 1) and (self.automatic_action_list[i] == 0) and (self.user_action_lilst[i] == 0):
+        if (self.flaglist[i] == 0) and (self.automatic_action_list[i] == 0) and (self.user_action_lilst[i] == 0):
             self.flaglist[i] = 1
-            self.fill_rect(i, self.GREEN, "F")
+            self.fill_rect(i, self.GREEN, "F", self.GREEN)
         elif (self.flaglist[i] == 1) and (self.automatic_action_list[i] == 0) and (self.user_action_lilst[i] == 0):
             self.flaglist[i] = 0
             self.fill_rect(i, self.WHITE)
@@ -300,9 +300,12 @@ class Minesweeper:
                     xrange=range(self.coords[i][0],self.coords[i][0]+self.coords["squarelength"])
                     yrange=range(self.coords[i][1],self.coords[i][1]+self.coords["squarelength"])
 
-                    if event.type == pygame.MOUSEBUTTONDOWN and mousex in xrange and mousey in yrange:
-                        if self.user_action_lilst[i]==0:
+                    if event.type == pygame.MOUSEBUTTONDOWN and mousex in xrange and mousey in yrange and event.button==1:
+                        if self.user_action_lilst[i]==0 and self.flaglist[i]==0:
                             self.choose_rect(i, self.BLUE)
+
+                    if event.type == pygame.MOUSEBUTTONDOWN and mousex in xrange and mousey in yrange and event.button==3:
+                        self.flag(i)
 
 
 

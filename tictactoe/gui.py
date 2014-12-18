@@ -34,16 +34,18 @@ class Gui:
         self.playername=username
         self.txtScreen.insert(END, "connecting...\n")
         self.main.update()
-        #try:
-        self.api = NetGameApi(username, "tictactoe", lambda: self.reciever, "172.16.2.18")
-        time.sleep(.42)
-        self.api.makeConnection()
-        Thread(name='tcp', target=self.api.startReceiving()).start()
-        #except:
-            #self.txtScreen.insert(END, "connection failed\n")
+        try:
+            self.api = NetGameApi(username, "tictactoe", lambda: self.reciever, "localhost")
+            time.sleep(.42)
+            self.api.makeConnection()
+            Thread(name='tcp', target=self.api.startReceiving()).start()
+        except:
+            self.txtScreen.insert(END, "connection failed\n")
 
 
     def reciever(self, content):
+
+
 
 
         if content["action"] == "listplayers":
@@ -66,7 +68,7 @@ class Gui:
             self.initialize_tictactoe(2)
 
             #check/compare line 59
-            pass
+
 
         # if content["action"] == "connect_accepted":
         #     try:
@@ -148,6 +150,7 @@ class Gui:
 
     def connet_to_player(self):
 
+        self.txtScreen.insert(END, "sent game request to player"+"\n")
         playernumber=int(self.lstPlayerListe.curselection()[0])
         print(self.playerlist[playernumber]["username"])
         self.api.connectToPlayer(self.playerlist[playernumber]["username"])
