@@ -63,7 +63,7 @@ class NetGameApi:
 
     def acceptGameInvitation(self, username):
         dictionary = {
-            "action": "connect_established",
+            "action": "connect_accepted",
             "data": {
                 "opponent": username
             }
