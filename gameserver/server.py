@@ -36,7 +36,6 @@ class NetGameServer:
             if user["data"]["playing"] == 0:
                 user["connection"].sendall(bytes(roomlist, encoding='utf-8'))
 
-        client.setblocking(0)
         while True:
             raw = client.recv(2048).decode("utf-8")
             data = self.decode_JSON(raw)
@@ -62,7 +61,7 @@ class NetGameServer:
                     self.gameHost = username
                     self.games[username] = {
                         "master": username,
-                        "players": [username, data["opponent"]],
+                        "players": [username, data["data"]["opponent"]],
                         "game": user["data"]["game"],
                         "active": False,
                         "startdatetime": False

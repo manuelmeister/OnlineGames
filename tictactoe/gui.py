@@ -62,18 +62,18 @@ class Gui:
                 pass
 
         if content["action"] == "connection_established":
-            #Api: send back "connection established
-            #initialize game as player 2
-            #delete initialize() line 74
+            self.api.connectionEstablished(content["data"]["opponent"])
+            self.initialize_tictactoe(2)
+
             #check/compare line 59
             pass
 
-        if content["action"] == "connect_accepted":
-            try:
-                self.main.destroy()
-            except:
-                pass
-            self.initialize_tictactoe(2)
+        # if content["action"] == "connect_accepted":
+        #     try:
+        #         self.main.destroy()
+        #     except:
+        #         pass
+        #     self.initialize_tictactoe(2)
 
 
         if content["action"] == "gamedata":
