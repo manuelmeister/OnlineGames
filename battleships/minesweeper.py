@@ -70,7 +70,10 @@ class Minesweeper:
 
 
 
-        TITLE_SURF, TITLE_RECT = self.makeText('number of mines: '+str(self.minescount), self.BLACK, self.WHITE, 0, int(self.header_height/2)+1, self.MWTextFontheigt)
+        TITLE_SURF, TITLE_RECT = self.makeText('number of mines: '+str(self.minescount), self.BLACK, self.WHITE, 10, int(self.header_height/2)+1, self.MWTextFontheigt)
+        self.board.blit(TITLE_SURF, TITLE_RECT)
+
+        TITLE_SURF, TITLE_RECT = self.makeText('left click: choose    right click: flag', self.BLACK, self.WHITE, 10, int(self.header_height/4*3)+1, self.MWTextFontheigt)
         self.board.blit(TITLE_SURF, TITLE_RECT)
 
         pygame.display.update()
