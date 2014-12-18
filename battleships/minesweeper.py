@@ -1,5 +1,6 @@
 import pygame, sys, time
 from random import *
+from datetime import datetime
 
 class Minesweeper:
     def __init__(self):
@@ -14,8 +15,8 @@ class Minesweeper:
         self.xcount=30
         self.ycount=20
         self.screen_height=int(self.screen_width/self.xcount)*self.ycount+self.header_height
-        self.borderwidth=3 #in % of square width
-        self.minescount=int((self.xcount*self.ycount)/10)
+        self.borderwidth=3 #in pixels
+        self.minescount=20#int((self.xcount*self.ycount)/10)
         self.MWFontheigt=int(self.screen_width/self.xcount)
         self.MWTextFontheigt=pygame.font.SysFont(None, int(self.screen_width/self.xcount))
         self.board = pygame.display.set_mode((self.screen_width,self.screen_height))
@@ -61,8 +62,15 @@ class Minesweeper:
         self.test_rect_list()
         print("minestestlist: ", self.minestestlist)
 
-        #for research:
-        print("debug:         ", list(range(self.xcount*self.ycount)))
+        self.flaglist=[]
+        for i in range(self.coords["xcount"]*self.coords["ycount"]):
+            self.flaglist.append(0)
+        print("flaglist:      ", self.automatic_action_list)
+
+
+
+        TITLE_SURF, TITLE_RECT = self.makeText('number of mines: '+str(self.minescount), self.BLACK, self.WHITE, 0, int(self.header_height/2)+1, self.MWTextFontheigt)
+        self.board.blit(TITLE_SURF, TITLE_RECT)
 
         pygame.display.update()
         self.initial_gui()
@@ -72,8 +80,16 @@ class Minesweeper:
 
     def set_random_mines(self):
         for i in range(self.minescount):
-            mine_position = randint(0,self.coords["xcount"]*self.coords["ycount"]-1)
-            self.mineslist[mine_position]=1
+            mine_set=False
+            while mine_set==False:
+                try:
+                    mine_position = randint(0,self.coords["xcount"]*self.coords["ycount"]-1)
+
+                    if (self.mineslist[mine_position+1] ==  0 and self.mineslist[mine_position-1] == 0) and (self.mineslist[mine_position+self.xcount] ==  0 and self.mineslist[mine_position-self.xcount] == 0):
+                        self.mineslist[mine_position]=1
+                        mine_set=True
+                except:
+                    pass
         return self.mineslist
 
 
@@ -188,7 +204,7 @@ class Minesweeper:
         self.win_screen()
 
     def win_screen(self):
-        TITLE_SURF, TITLE_RECT = self.makeText('You Win!', self.BLACK, self.WHITE, 0, int(self.header_height/2)+1, self.MWTextFontheigt)
+        TITLE_SURF, TITLE_RECT = self.makeText('You Win!      ', self.BLACK, self.WHITE, 0, int(self.header_height/2)+1, self.MWTextFontheigt)
         self.board.blit(TITLE_SURF, TITLE_RECT)
         pygame.display.update()
         self.play_again()
@@ -225,7 +241,7 @@ class Minesweeper:
 
 
 
-        TITLE_SURF, TITLE_RECT = self.makeText('GAME OVER', self.BLACK, self.WHITE, 0, int(self.header_height/2)+1, self.MWTextFontheigt)
+        TITLE_SURF, TITLE_RECT = self.makeText('GAME OVER              ', self.BLACK, self.WHITE, 0, int(self.header_height/2)+1, self.MWTextFontheigt)
         self.board.blit(TITLE_SURF, TITLE_RECT)
 
         pygame.display.update()
@@ -260,6 +276,15 @@ class Minesweeper:
                 if event.type == pygame.MOUSEBUTTONDOWN and mousex in xrange and mousey in yrange:
                     self.__init__()
 
+    def flag(self, i):
+        if (self.flaglist[i] == 1) and (self.automatic_action_list[i] == 0) and (self.user_action_lilst[i] == 0):
+            self.flaglist[i] = 1
+            self.fill_rect(i, self.GREEN, "F")
+        elif (self.flaglist[i] == 1) and (self.automatic_action_list[i] == 0) and (self.user_action_lilst[i] == 0):
+            self.flaglist[i] = 0
+            self.fill_rect(i, self.WHITE)
+
+
 
     def mainloop(self):
         while True:
@@ -272,12 +297,15 @@ class Minesweeper:
                 mousey=pygame.mouse.get_pos()[1]
 
                 for i in range(self.squarecount):
-
                     xrange=range(self.coords[i][0],self.coords[i][0]+self.coords["squarelength"])
                     yrange=range(self.coords[i][1],self.coords[i][1]+self.coords["squarelength"])
+
                     if event.type == pygame.MOUSEBUTTONDOWN and mousex in xrange and mousey in yrange:
                         if self.user_action_lilst[i]==0:
                             self.choose_rect(i, self.BLUE)
+
+
+
 
 
 

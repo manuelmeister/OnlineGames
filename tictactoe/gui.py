@@ -35,7 +35,7 @@ class Gui:
         self.txtScreen.insert(END, "connecting...\n")
         self.main.update()
         #try:
-        self.api = NetGameApi(username, "tictactoe", lambda: self.reciever)
+        self.api = NetGameApi(username, "tictactoe", lambda: self.reciever, "172.16.2.18")
         time.sleep(.42)
         self.api.makeConnection()
         Thread(name='tcp', target=self.api.startReceiving()).start()
@@ -152,6 +152,7 @@ class Gui:
         print(self.playerlist[playernumber]["username"])
         self.api.connectToPlayer(self.playerlist[playernumber]["username"])
         self.txtScreen.insert(END, "wait for your connection..."+"\n")
+        self.choose_player(self.playerlist)
 
 
 
