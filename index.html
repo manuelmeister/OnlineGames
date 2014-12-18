@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Online Games by manuelmeister</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Online Games</h1>
+        <h2>Your favorite API for Python Server gaming</h2>
+        <a href="https://github.com/manuelmeister/OnlineGames" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="netgameapi" class="anchor" href="#netgameapi" aria-hidden="true"><span class="octicon octicon-link"></span></a>NetGameAPI</h1>
+
+<p>The NetGameAPI is currently not optimized for realtime data transfer</p>
+
+<h2>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h2>
+
+<p>Add the gameserver folder to your Project</p>
+
+<p>Embed the API with:</p>
+
+<div class="highlight highlight-python"><pre> <span class="pl-k">from</span> gameserver.netgameapi <span class="pl-k">import</span> <span class="pl-k">*</span></pre></div>
+
+<p></p>
+
+<h2>
+<a id="transmitting-data" class="anchor" href="#transmitting-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Transmitting Data</h2>
+
+<ol>
+<li>
+<p><strong>Create a instance of the netgameapi class</strong><br>
+<code>api = NetGameApi(name, game, lambda: receiver, [address], [port])</code>  </p>
+
+<ul>
+<li> <code>name</code>     = your username<br>
+</li>
+<li> <code>game</code>     = name of your game</li>
+<li> <code>receiver</code> = a function with one parameter, the parameter is in the protocol dictionary form<br>
+</li>
+<li> <code>address</code>  = the ip address or the domainname of the server [optional]<br>
+</li>
+<li> <code>port</code>     = port of the server [optional]<br>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Connect to server</strong><br>
+<code>api.makeConnection()</code></p>
+
+<ul>
+<li>If the username is already taken you'll get the <a href="#error.doubleusername">error doubleusername</a>
+</li>
+</ul>
+</li>
+<li><p><strong>Make a new Thread that listens to the server</strong><br>
+<code>tcpthread = Thread(name='tcp', target=api.startReceiving())</code></p></li>
+<li><p><strong>You'll receive the <a href="#listplayers">playerlist</a></strong><br>
+It will only contain the players that play your game and are currently not playing  </p></li>
+<li><p><strong>Select a player from the playerlist</strong><br>
+Use the username given in the playerlist<br>
+<code>api.connectToPlayer(username_of_opponent)</code></p></li>
+<li>
+<p><strong>Server Processing</strong>  </p>
+
+<ul>
+<li>The server checks if your opponent already is ingame. If he already is, the <a href="#error.notavailable">error notavailable</a> gets thrown</li>
+</ul>
+</li>
+<li>
+<p><strong>Your opponent receives your connect as a <a href="#gameinvitation">gameinvitation</a></strong>  </p>
+
+<ul>
+<li>Your opponent can either <a href="#accept">accept</a> or <a href="#refuse">refuse</a> the invitation</li>
+<li>If he accepts, then you'll receive a <a href="#connection_established">connection_established</a>
+</li>
+<li>If he refuses, then you'll receive the <a href="#error.connection_refused">error connection_refused</a>
+</li>
+</ul>
+</li>
+<li><p><strong>Inform server, that you are now ready to play</strong><br>
+Send the server <code>connectionEstablished(opponent)</code></p></li>
+<li><p><strong>Now you can send your Gamedata</strong><br>
+<code>api.submitGameData(content)</code></p></li>
+</ol>
+
+<p></p>
+
+<h2>
+<a id="protocol" class="anchor" href="#protocol" aria-hidden="true"><span class="octicon octicon-link"></span></a>Protocol</h2>
+
+<h3>
+<a id="make-a-connection-using--makeconnection" class="anchor" href="#make-a-connection-using--makeconnection" aria-hidden="true"><span class="octicon octicon-link"></span></a>Make a connection using  <code>makeConnection()</code>
+</h3>
+
+<div class="highlight highlight-python"><pre>{
+    <span class="pl-s1"><span class="pl-pds">"</span>action<span class="pl-pds">"</span></span>:<span class="pl-s1"><span class="pl-pds">"</span>connection<span class="pl-pds">"</span></span>,
+    <span class="pl-s1"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>:{
+        <span class="pl-s1"><span class="pl-pds">"</span>username<span class="pl-pds">"</span></span>:<span class="pl-s1"><span class="pl-pds">"</span>your_username<span class="pl-pds">"</span></span>,
+        <span class="pl-s1"><span class="pl-pds">"</span>game<span class="pl-pds">"</span></span>:<span class="pl-s1"><span class="pl-pds">"</span>your_game_name<span class="pl-pds">"</span></span>
+    }
+}</pre></div>
+
+<h3>
+<a id="connect-to-player" class="anchor" href="#connect-to-player" aria-hidden="true"><span class="octicon octicon-link"></span></a>Connect to player</h3>
+
+<p>Use  <code>connectToPlayer(user_you_wish_to_connect)</code> to invite the other player</p>
+
+<div class="highlight highlight-python"><pre>{
+    <span class="pl-s1"><span class="pl-pds">"</span>action<span class="pl-pds">"</span></span>:<span class="pl-s1"><span class="pl-pds">"</span>connect<span class="pl-pds">"</span></span>,
+    <span class="pl-s1"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>:{
+        <span class="pl-s1"><span class="pl-pds">"</span>master<span class="pl-pds">"</span></span>: <span class="pl-s1"><span class="pl-pds">"</span>your_username<span class="pl-pds">"</span></span>,
+        <span class="pl-s1"><span class="pl-pds">"</span>opponent<span class="pl-pds">"</span></span>: user_you_wish_to_connect
+    }
+}</pre></div>
+
+<h3>
+<a id="game-invitation" class="anchor" href="#game-invitation" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="gameinvitation">Game Invitation</a>
+</h3>
+
+<p>You'll receive this if the master player sends a  <code>connectToPlayer(user_requesting_connection)</code> to the server</p>
+
+<div class="highlight highlight-python"><pre>{
+    <span class="pl-s1"><span class="pl-pds">"</span>action<span class="pl-pds">"</span></span>: <span class="pl-s1"><span class="pl-pds">"</span>gameinvitation<span class="pl-pds">"</span></span>,
+    <span class="pl-s1"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>: {
+        <span class="pl-s1"><span class="pl-pds">"</span>master<span class="pl-pds">"</span></span>: user_requesting_connection
+    }
+}</pre></div>
+
+<h3>
+<a id="accept-game-invitation" class="anchor" href="#accept-game-invitation" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="accept">Accept Game Invitation</a>
+</h3>
+
+<p>You accept the invitation with  <code>acceptGameInvitation(user_requesting_connection)</code></p>
+
+<div class="highlight highlight-python"><pre>{
+            <span class="pl-s1"><span class="pl-pds">"</span>action<span class="pl-pds">"</span></span>: <span class="pl-s1"><span class="pl-pds">"</span>connect_accepted<span class="pl-pds">"</span></span>,
+            <span class="pl-s1"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>: {
+                <span class="pl-s1"><span class="pl-pds">"</span>opponent<span class="pl-pds">"</span></span>: user_requesting_connection
+     }
+}</pre></div>
+
+<h3>
+<a id="refuse-game-invitation" class="anchor" href="#refuse-game-invitation" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="refuse">Refuse Game Invitation</a>
+</h3>
+
+<p>You refuse the invitation with  <code>refuseGameInvitation(user_requesting_connection)</code></p>
+
+<div class="highlight highlight-python"><pre>{
+            <span class="pl-s1"><span class="pl-pds">"</span>action<span class="pl-pds">"</span></span>: <span class="pl-s1"><span class="pl-pds">"</span>connect_refused<span class="pl-pds">"</span></span>,
+            <span class="pl-s1"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>: {
+                <span class="pl-s1"><span class="pl-pds">"</span>opponent<span class="pl-pds">"</span></span>: user_requesting_connection
+     }
+}</pre></div>
+
+<h3>
+<a id="connection-to-opponent-established" class="anchor" href="#connection-to-opponent-established" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="connection_established">Connection to opponent established</a>
+</h3>
+
+<p>You are the master of the game</p>
+
+<div class="highlight highlight-python"><pre>{
+    <span class="pl-s1"><span class="pl-pds">"</span>action<span class="pl-pds">"</span></span>:<span class="pl-s1"><span class="pl-pds">"</span>connection_established<span class="pl-pds">"</span></span>,
+    <span class="pl-s1"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>:{
+        <span class="pl-s1"><span class="pl-pds">"</span>username<span class="pl-pds">"</span></span>:<span class="pl-s1"><span class="pl-pds">"</span>opponent_username<span class="pl-pds">"</span></span>
+    }
+}</pre></div>
+
+<h3>
+<a id="playerlist" class="anchor" href="#playerlist" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="listplayers">Playerlist</a>
+</h3>
+
+<p>Format of playerlist</p>
+
+<div class="highlight highlight-python"><pre>{
+    <span class="pl-s1"><span class="pl-pds">"</span>action<span class="pl-pds">"</span></span>: <span class="pl-s1"><span class="pl-pds">"</span>listplayers<span class="pl-pds">"</span></span>,
+    <span class="pl-s1"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>: [
+        {<span class="pl-s1"><span class="pl-pds">"</span>playing<span class="pl-pds">"</span></span>: <span class="pl-c1">0</span>,<span class="pl-s1"><span class="pl-pds">"</span>username<span class="pl-pds">"</span></span>: <span class="pl-s1"><span class="pl-pds">"</span>manuel<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>game<span class="pl-pds">"</span></span>: <span class="pl-s1"><span class="pl-pds">"</span>tictactoe<span class="pl-pds">"</span></span>},
+        {<span class="pl-s1"><span class="pl-pds">"</span>playing<span class="pl-pds">"</span></span>: <span class="pl-c1">1</span>,<span class="pl-s1"><span class="pl-pds">"</span>username<span class="pl-pds">"</span></span>: <span class="pl-s1"><span class="pl-pds">"</span>lukas<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>game<span class="pl-pds">"</span></span>: <span class="pl-s1"><span class="pl-pds">"</span>tictactoe<span class="pl-pds">"</span></span>}
+    ]
+}</pre></div>
+
+<p></p>
+
+<h2>
+<a id="errors" class="anchor" href="#errors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Errors</h2>
+
+<p>Errors returned by the server</p>
+
+<h4>
+<a id="doubleusername" class="anchor" href="#doubleusername" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="error.doubleusername">doubleusername</a>
+</h4>
+
+<div class="highlight highlight-python"><pre>{
+    <span class="pl-s1"><span class="pl-pds">"</span>action<span class="pl-pds">"</span></span>:<span class="pl-s1"><span class="pl-pds">"</span>error<span class="pl-pds">"</span></span>,
+    <span class="pl-s1"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>:{
+        <span class="pl-s1"><span class="pl-pds">"</span>errorinfo<span class="pl-pds">"</span></span>:<span class="pl-s1"><span class="pl-pds">"</span>doubleusername<span class="pl-pds">"</span></span>,
+        <span class="pl-s1"><span class="pl-pds">"</span>helpmessage<span class="pl-pds">"</span></span>:<span class="pl-s1"><span class="pl-pds">"</span>Please connect with different username.<span class="pl-pds">"</span></span>
+    }
+}</pre></div>
+
+<h4>
+<a id="notavailable" class="anchor" href="#notavailable" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="error.notavailable">notavailable</a>
+</h4>
+
+<div class="highlight highlight-python"><pre>{
+    <span class="pl-s1"><span class="pl-pds">"</span>action<span class="pl-pds">"</span></span>:<span class="pl-s1"><span class="pl-pds">"</span>error<span class="pl-pds">"</span></span>,
+    <span class="pl-s1"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>:{
+        <span class="pl-s1"><span class="pl-pds">"</span>errorinfo<span class="pl-pds">"</span></span>:<span class="pl-s1"><span class="pl-pds">"</span>notavailable<span class="pl-pds">"</span></span>,
+        <span class="pl-s1"><span class="pl-pds">"</span>helpmessage<span class="pl-pds">"</span></span>:<span class="pl-s1"><span class="pl-pds">"</span>User already ingame.<span class="pl-pds">"</span></span>
+    }
+}</pre></div>
+
+<h4>
+<a id="connection_refused" class="anchor" href="#connection_refused" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="error.connection_refused">connection_refused</a>
+</h4>
+
+<div class="highlight highlight-python"><pre>{
+    <span class="pl-s1"><span class="pl-pds">"</span>action<span class="pl-pds">"</span></span>:<span class="pl-s1"><span class="pl-pds">"</span>error<span class="pl-pds">"</span></span>,
+    <span class="pl-s1"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>:{
+        <span class="pl-s1"><span class="pl-pds">"</span>errorinfo<span class="pl-pds">"</span></span>:<span class="pl-s1"><span class="pl-pds">"</span>connection_refused<span class="pl-pds">"</span></span>,
+        <span class="pl-s1"><span class="pl-pds">"</span>helpmessage<span class="pl-pds">"</span></span>:<span class="pl-s1"><span class="pl-pds">"</span>Your opponent refused.<span class="pl-pds">"</span></span>
+    }
+}</pre></div>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/manuelmeister/OnlineGames/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/manuelmeister/OnlineGames/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/manuelmeister/OnlineGames"></a> is maintained by <a href="https://github.com/manuelmeister">manuelmeister</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
